@@ -28,6 +28,9 @@ function mergeSeedArray(existing=[], incoming=[], keyFn){
     const i=index.get(k);
     // Existing/local data wins; seed only fills newly introduced fields.
     out[i]={...clone(s),...out[i]};
+    for(const field of ['capabilities','defaultActions','agents']){
+      if(Array.isArray(s[field])&&Array.isArray(out[i][field])) out[i][field]=[...new Set([...s[field],...out[i][field]])];
+    }
     if(Array.isArray(s.assignments)&&Array.isArray(out[i].assignments)){
       const byId=new Map(out[i].assignments.map(a=>[a.id,a]));
       for(const a of s.assignments) if(!byId.has(a.id)) out[i].assignments.push(clone(a));
@@ -36,7 +39,7 @@ function mergeSeedArray(existing=[], incoming=[], keyFn){
   return out;
 }
 
-export function migrateStore(store,seed,{version='5.1.0'}={}){
+export function migrateStore(store,seed,{version='5.2.0'}={}){
   const report=[];
   for(const [name,keyFn] of Object.entries(keyFor)){
     const before=store.get(name,[]);

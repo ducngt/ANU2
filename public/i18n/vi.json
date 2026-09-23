@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "ANU2",
-    "version": "V5.1"
+    "version": "V5.2"
   },
   "common": {
     "logout": "Đăng xuất",

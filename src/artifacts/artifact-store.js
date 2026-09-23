@@ -28,6 +28,7 @@ export class ArtifactStore {
     const artifact={id,name,mimeType:'text/plain',mediaType:'TEXT',size:new TextEncoder().encode(value).length,source,uploadedBy,uploadedAt:new Date().toISOString(),workItemId,domain,classification,checksum:'',processingStatus:'TEXT_EXTRACTED',textPreview:value.slice(0,4000)};
     const arr=this.list(); arr.unshift(artifact); this.store.set('artifacts',arr.slice(0,1000)); return artifact;
   }
+  updateProcessing(artifactId,patch={}){const arr=this.list();const a=arr.find(x=>x.id===artifactId);if(!a)throw new Error('ARTIFACT_NOT_FOUND');Object.assign(a,patch);this.store.set('artifacts',arr);return a;}
   attachToWork(artifactId,workId){const arr=this.list();const a=arr.find(x=>x.id===artifactId);if(!a)throw new Error('ARTIFACT_NOT_FOUND');a.workItemId=workId;this.store.set('artifacts',arr);return a;}
   file(id){return this.sessionFiles.get(id)||null;}
 }

@@ -4,7 +4,7 @@ export class MultiAgentRuntime {
 
   artifactContext(work){
     const artifacts=this.store.get('artifacts',[]).filter(a=>(work.artifactIds||[]).includes(a.id));
-    return artifacts.map(a=>`- ${a.name} [${a.mediaType}] ${a.textPreview?`Nội dung trích: ${a.textPreview.slice(0,2000)}`:'đã ghi nhận; browser runtime chưa trích xuất nội dung nhị phân của loại tệp này'}`).join('\n');
+    return artifacts.map(a=>`- ${a.name} [${a.mediaType}] ${a.extractedText?`Nội dung AI đã xử lý: ${a.extractedText.slice(0,5000)}`:a.textPreview?`Nội dung trích: ${a.textPreview.slice(0,3000)}`:`trạng thái ${a.processingStatus||'STORED'}; chưa có nội dung đã xử lý`}`).join('\n');
   }
   async respondToHumanRequest({workId,request,human,userContext}){
     const items=this.store.get('workItems',[]); const work=items.find(w=>w.id===workId); if(!work) throw new Error('Không tìm thấy công việc');

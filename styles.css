@@ -6,3 +6,6 @@
 
 /* V5.1 direct speech + Human-AI request composer */
 .human-ai-input{display:flex;flex-direction:column;gap:12px}.human-ai-input textarea{width:100%;margin-top:5px;border:1px solid #cbd5e1;border-radius:10px;padding:12px;resize:vertical;min-height:120px;font:inherit;line-height:1.5}.speech-row,.assist-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.speech-button{border:1px solid #2563eb;background:#eff6ff;color:#1d4ed8;border-radius:10px;padding:9px 13px;cursor:pointer}.speech-button:disabled{opacity:.5;cursor:not-allowed}.speech-interim{min-height:20px;color:#64748b;font-style:italic}.request-history{padding:12px 0;border-bottom:1px solid #eef2f7}.request-history p{white-space:pre-wrap;margin:5px 0}.assist-row{justify-content:space-between;padding-top:2px}
+
+/* V5.2 multimodal runtime */
+.processor-state{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:.45rem}.artifact .error{color:#a82020}.multimodal-note{border-left:4px solid #8aa5bd;padding:.7rem 1rem;background:#f7fafc}.ai-companion{display:grid;gap:1rem}.ai-companion .speech-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}.ai-companion textarea{width:100%}.processing{opacity:.72}.artifact button{margin-top:.4rem}

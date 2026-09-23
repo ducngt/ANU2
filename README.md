@@ -1,23 +1,24 @@
-# ANU2 V5.1 — Domain Intelligence + Human–AI Authorized Work
+# ANU2 V5.2 — Multimodal Processing Runtime
 
-V5.1 is an experimental baseline that consolidates the work from V3/V4 without removing prior capabilities.
+V5.2 keeps the V5 Domain Intelligence architecture (LIS, RIS, SIS, PIS, OIS, FIS, FMS) and upgrades Human–AI work so binary Artifacts can be processed by the configured AI provider instead of only being stored as metadata.
 
-Key additions:
-- Domain Intelligence: LIS, RIS, SIS, PIS, OIS, FIS, FMS on one shared University Core.
-- Multimodal intake: documents, images, audio and video as governed Input Artifacts; CSV/JSON can still be committed to master data.
-- Working System Admin user administration: create users, provision imported people, suspend/activate, reset password, add role assignments.
-- System Admin can work with AI on governance work items; AI actions remain delegated and human-controlled.
-- Agent assignment includes domain, resource scope, data scope, validity and human checkpoint.
-- VI / EN / 中文 retained.
+## V5.2 additions
+- Universal Human input in Work Items: text, direct speech, documents, images, audio and video.
+- The Admin Data Intake screen now also has direct speech, an AI request composer, file intake and an authorized Human–AI data-intake Work Item.
+- New `MultimodalProcessor` writes AI-processed content back to the governed Artifact with provider/model/provenance metadata.
+- Work-item AI consumes processed Artifact content automatically when the delegated assignment allows READ / READ_FILE / ANALYZE.
+- `AI Nhập dữ liệu` may READ_FILE, MAP_FIELDS, ANALYZE, CREATE_DRAFT and WRITE_STAGING; master-data commit remains `BEFORE_COMMIT` Human checkpoint.
+- No silent claim that a file was read. Unsupported provider/media combinations fail explicitly.
 
+## Browser trial provider matrix
+- TXT / MD / CSV / JSON: local text extraction.
+- Gemini: inline multimodal processing for PDF, image, audio, video and other MIME types supported by the selected Gemini model.
+- OpenAI / OpenRouter / OpenAI-compatible: image analysis with a vision-capable model.
+- OpenAI: uploaded audio transcription through `gpt-4o-mini-transcribe`.
+- Other unsupported combinations return an explicit error.
 
-## V5.1 direct speech + document-assisted Human-AI work
-- Every Work Item has a Human-AI request composer.
-- Users can speak directly using the browser Web Speech API (Chrome/Edge support depends on browser/permissions), edit the transcript, attach files, and submit one request to all AI actors already delegated to the Work Item.
-- Spoken/typed requests are stored as governed text Artifacts with provenance and linked to the Work Item.
-- TXT/MD/CSV/JSON are text-extracted in-browser and included in AI context. PDF/Office/image/audio/video are recorded as Artifacts with metadata in this browser-only baseline; full binary extraction/vision/transcription remains a follow-up processor capability.
-- AI responses continue to respect each assignment's capability, action, domain, resource scope, data scope, validity and Human Checkpoint.
-- No Agent is auto-assigned simply because a user speaks or uploads a document; Human delegation remains the authority boundary.
+## Important browser limitation
+GitHub Pages remains an experimental client-side runtime. Binary bytes exist only in the current browser tab/session. After a reload, metadata remains but the original file must be selected again before re-processing. Production should move API credentials, file bytes, object storage and multimodal processing to a secure backend gateway.
 
 ## Demo accounts
 - admin / Admin123!
@@ -37,6 +38,4 @@ npm run check
 npm start
 ```
 
-For GitHub Pages, deploy the repository root through the included Pages workflow.
-
-See `docs/V5-ARCHITECTURE.md` for architecture and browser limitations.
+See `docs/V5.2-MULTIMODAL-RUNTIME.md` and `docs/V5-ARCHITECTURE.md`.
