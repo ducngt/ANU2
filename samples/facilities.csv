@@ -1,0 +1,3 @@
+id,type,name,campus,buildingId,floor,area,grossArea,usableArea,status
+BLD-B1,BUILDING,Toa nha B1,CAMPUS-A,,0,0,3200,2600,ACTIVE
+ROOM-B101,ROOM,Phong B101,CAMPUS-A,BLD-B1,1,68,0,0,ACTIVE

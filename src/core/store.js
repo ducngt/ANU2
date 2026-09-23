@@ -1,10 +1,8 @@
 export class BrowserStore {
-  constructor(namespace='anu2-v2'){ this.ns=namespace; this.memory=new Map(); }
+  constructor(namespace='anu2-v3'){ this.ns=namespace; this.memory=new Map(); }
   key(k){ return `${this.ns}:${k}`; }
   get(k, fallback=null){
-    try {
-      if(globalThis.localStorage){ const raw=globalThis.localStorage.getItem(this.key(k)); return raw==null?fallback:JSON.parse(raw); }
-    } catch {}
+    try { if(globalThis.localStorage){ const raw=globalThis.localStorage.getItem(this.key(k)); return raw==null?fallback:JSON.parse(raw); } } catch {}
     return this.memory.has(k)?structuredClone(this.memory.get(k)):fallback;
   }
   set(k, value){
