@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "ANU2",
-    "version": "V4.0 alpha 2.1"
+    "version": "V5.0"
   },
   "common": {
     "logout": "Sign out",
@@ -36,7 +36,7 @@
     "dashboard_system": "System overview",
     "imports": "Data import",
     "master": "Master data",
-    "accounts": "Users & permissions",
+    "accounts": "Users & administration",
     "work": "Work",
     "settings": "AI & models",
     "audit": "System log",
@@ -58,7 +58,8 @@
     "learning": "Courses & tasks",
     "documents_knowledge": "Documents & knowledge",
     "dashboard_staff": "Today's work",
-    "business_data": "Operational data"
+    "business_data": "Operational data",
+    "domains": "Operational domains"
   },
   "settings": {
     "title": "AI & models",

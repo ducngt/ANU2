@@ -24,7 +24,7 @@ export const seed = {
   capabilities:[
     {id:'knowledge.retrieve',name:'Tra cứu tri thức',authority:'READ',status:'ACTIVE',agents:['knowledge-agent','research-agent','management-agent','executive-agent']},
     {id:'evidence.evaluate',name:'Đánh giá bằng chứng',authority:'ANALYZE',status:'ACTIVE',agents:['evidence-agent','research-agent','management-agent']},
-    {id:'model.reason',name:'Suy luận',authority:'REASON',status:'ACTIVE',agents:['research-agent','knowledge-agent','data-agent','management-agent','executive-agent','learning-agent']},
+    {id:'model.reason',name:'Suy luận',authority:'REASON',status:'ACTIVE',agents:['research-agent','knowledge-agent','data-agent','management-agent','executive-agent','learning-agent','data-quality-agent','access-governance-agent','system-governance-agent']},
     {id:'research.synthesize',name:'Tổng hợp nghiên cứu',authority:'RECOMMEND',status:'ACTIVE',agents:['research-agent']},
     {id:'data.analyze',name:'Phân tích dữ liệu',authority:'ANALYZE',status:'ACTIVE',agents:['data-agent','management-agent','executive-agent']},
     {id:'scenario.compare',name:'So sánh kịch bản',authority:'RECOMMEND',status:'ACTIVE',agents:['management-agent','executive-agent']},
@@ -33,7 +33,9 @@ export const seed = {
     {id:'data.intake',name:'Nhập dữ liệu',authority:'WRITE_STAGING',status:'ACTIVE',agents:['data-intake-agent']},
     {id:'data.quality',name:'Kiểm tra chất lượng dữ liệu',authority:'ANALYZE',status:'ACTIVE',agents:['data-quality-agent']},
     {id:'identity.provision',name:'Đề xuất tài khoản và quyền',authority:'RECOMMEND',status:'ACTIVE',agents:['identity-provisioning-agent']},
-    {id:'asset.analyze',name:'Phân tích tài sản',authority:'ANALYZE',status:'ACTIVE',agents:['asset-data-agent']}
+    {id:'asset.analyze',name:'Phân tích tài sản',authority:'ANALYZE',status:'ACTIVE',agents:['asset-data-agent']},
+    {id:'access.review',name:'Rà soát người dùng và quyền',authority:'RECOMMEND',status:'ACTIVE',agents:['access-governance-agent']},
+    {id:'system.governance',name:'Phân tích vận hành hệ thống',authority:'RECOMMEND',status:'ACTIVE',agents:['system-governance-agent']}
   ],
   agents:[
     {id:'research-agent',name:'AI Nghiên cứu',owner:'Research Office',accountableRole:'HEAD_OF_RESEARCH',capabilities:['knowledge.retrieve','evidence.evaluate','model.reason','research.synthesize'],defaultActions:['READ','ANALYZE','CREATE_DRAFT','RECOMMEND'],status:'ACTIVE'},
@@ -44,9 +46,11 @@ export const seed = {
     {id:'executive-agent',name:'AI Điều hành',owner:'Executive Office',accountableRole:'EXECUTIVE',capabilities:['knowledge.retrieve','data.analyze','scenario.compare','risk.assess','decision.prepare','model.reason'],defaultActions:['READ','ANALYZE','CREATE_DRAFT','RECOMMEND'],status:'ACTIVE'},
     {id:'learning-agent',name:'AI Đồng hành học tập',owner:'Academic Affairs',accountableRole:'ACADEMIC_OWNER',capabilities:['knowledge.retrieve','model.reason'],defaultActions:['READ','EXPLAIN','CREATE_DRAFT'],status:'ACTIVE'},
     {id:'data-intake-agent',name:'AI Nhập dữ liệu',owner:'System Administration',accountableRole:'SYSTEM_ADMIN',capabilities:['data.intake'],defaultActions:['READ_FILE','MAP_FIELDS','WRITE_STAGING'],status:'ACTIVE'},
-    {id:'data-quality-agent',name:'AI Chất lượng dữ liệu',owner:'Data Office',accountableRole:'DATA_OWNER',capabilities:['data.quality'],defaultActions:['READ','ANALYZE','FLAG_ISSUE'],status:'ACTIVE'},
+    {id:'data-quality-agent',name:'AI Chất lượng dữ liệu',owner:'Data Office',accountableRole:'DATA_OWNER',capabilities:['data.quality','model.reason'],defaultActions:['READ','ANALYZE','FLAG_ISSUE'],status:'ACTIVE'},
     {id:'identity-provisioning-agent',name:'AI Cấp danh tính',owner:'System Administration',accountableRole:'SYSTEM_ADMIN',capabilities:['identity.provision'],defaultActions:['READ','RECOMMEND_ROLE','CREATE_DRAFT'],status:'ACTIVE'},
-    {id:'asset-data-agent',name:'AI Tài sản',owner:'Facilities Office',accountableRole:'ASSET_OWNER',capabilities:['asset.analyze'],defaultActions:['READ','ANALYZE','FLAG_ISSUE'],status:'ACTIVE'}
+    {id:'asset-data-agent',name:'AI Tài sản',owner:'Facilities Office',accountableRole:'ASSET_OWNER',capabilities:['asset.analyze'],defaultActions:['READ','ANALYZE','FLAG_ISSUE'],status:'ACTIVE'},
+    {id:'access-governance-agent',name:'AI Quản trị truy cập',owner:'System Administration',accountableRole:'SYSTEM_ADMIN',capabilities:['access.review','data.quality','model.reason'],defaultActions:['READ','ANALYZE','FLAG_ISSUE','RECOMMEND'],status:'ACTIVE'},
+    {id:'system-governance-agent',name:'AI Quản trị hệ thống',owner:'System Administration',accountableRole:'SYSTEM_ADMIN',capabilities:['system.governance','data.quality','model.reason'],defaultActions:['READ','ANALYZE','CREATE_DRAFT','RECOMMEND'],status:'ACTIVE'}
   ],
   knowledge:[
     {id:'KN-ANU-001',title:'Dữ liệu Sống-Sạch-Đúng-Đủ',text:'Dữ liệu quan trọng phải phản ánh thực tại, có nguồn gốc, chủ sở hữu, phiên bản, ngữ cảnh, mức kiểm chứng và hiệu lực.',scope:'PUBLIC',owner:'ANU',valid:true},
@@ -57,7 +61,11 @@ export const seed = {
       {id:'ASG-1',agentId:'research-agent',task:'Khảo sát xu hướng và nhu cầu xã hội',capabilities:['knowledge.retrieve','evidence.evaluate','research.synthesize','model.reason'],actions:['READ','ANALYZE','CREATE_DRAFT','RECOMMEND'],status:'READY'},
       {id:'ASG-2',agentId:'data-agent',task:'Phân tích dữ liệu tuyển sinh và nguồn lực',capabilities:['data.analyze','model.reason'],actions:['READ','ANALYZE','CREATE_DRAFT'],status:'READY'},
       {id:'ASG-3',agentId:'management-agent',task:'So sánh kịch bản và đánh giá rủi ro',capabilities:['scenario.compare','risk.assess','decision.prepare','model.reason'],actions:['READ','ANALYZE','CREATE_DRAFT','RECOMMEND'],status:'WAITING'}
-    ],outputs:[],createdAt:'2026-09-24T00:00:00Z'}
+    ],outputs:[],createdAt:'2026-09-24T00:00:00Z'},
+    {id:'WORK-SYS-GOV',title:'Rà soát dữ liệu, tài khoản và quyền hệ thống',purpose:'Quản trị hệ thống phối hợp AI để phát hiện dữ liệu thiếu, tài khoản bất thường và quyền cần rà soát',humanOwner:'USR-ADMIN',scope:{type:'SYSTEM',id:'ANU2'},domain:'OIS',priority:'HIGH',status:'IN_PROGRESS',deadline:'2026-10-01',expectedOutcome:'Danh sách vấn đề và khuyến nghị để quản trị viên xác nhận',artifactIds:[],assignments:[
+      {id:'ASG-SYS-1',agentId:'data-quality-agent',task:'Rà soát chất lượng dữ liệu nền tảng',domain:'OIS',resourceScope:'UNIVERSITY_DATA',dataScope:'*',validUntil:null,humanCheckpoint:'BEFORE_CHANGE',delegatedBy:'USR-ADMIN',capabilities:['data.quality','model.reason'],actions:['READ','ANALYZE','FLAG_ISSUE'],status:'READY'},
+      {id:'ASG-SYS-2',agentId:'access-governance-agent',task:'Rà soát tài khoản, vai trò và phạm vi quyền',domain:'PIS',resourceScope:'IDENTITY_AND_ACCESS',dataScope:'users,roles,assignments',validUntil:null,humanCheckpoint:'BEFORE_CHANGE',delegatedBy:'USR-ADMIN',capabilities:['access.review','data.quality','model.reason'],actions:['READ','ANALYZE','FLAG_ISSUE','RECOMMEND'],status:'READY'}
+    ],outputs:[],createdAt:'2026-09-24T02:30:00Z'}
   ],
   organizations:[
     {id:'ANU',code:'ANU',name:'Trường Đại học',type:'UNIVERSITY',parentId:'',mission:'Quản trị và phát triển toàn trường',functions:['Định hướng chiến lược','Đào tạo','Nghiên cứu','Phục vụ xã hội'],responsibilities:['Xác lập mục tiêu và chính sách','Phân bổ nguồn lực','Giám sát kết quả'],managerRole:'RECTOR',status:'ACTIVE'},
@@ -97,5 +105,9 @@ export const seed = {
   researchProjects:[
     {id:'PROJECT-AI-2026',code:'PROJECT-AI-2026',name:'AI trong giáo dục kỹ thuật',ownerUnit:'FACULTY-ENG',principalInvestigator:'USR-RESEARCH',status:'ACTIVE',source:'seed-demo'}
   ],
+  financeRecords:[
+    {id:'FIN-2026-01',year:2026,type:'BUDGET',ownerUnit:'ANU',amount:1000000000,currency:'VND',status:'PLANNED',source:'seed-demo'}
+  ],
+  artifacts:[],
   importBatches:[], provisioningQueue:[], audit:[], traces:[], memory:[], failures:[], passwordResetRequests:[]
 };

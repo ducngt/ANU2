@@ -14,7 +14,9 @@ const keyFor={
   inventory:x=>x.id||x.itemCode,
   programs:x=>x.id||x.code,
   courses:x=>x.id||x.code,
-  researchProjects:x=>x.id||x.code
+  researchProjects:x=>x.id||x.code,
+  financeRecords:x=>x.id,
+  artifacts:x=>x.id
 };
 
 function mergeSeedArray(existing=[], incoming=[], keyFn){
@@ -34,7 +36,7 @@ function mergeSeedArray(existing=[], incoming=[], keyFn){
   return out;
 }
 
-export function migrateStore(store,seed,{version='4.0.0-alpha.2.1'}={}){
+export function migrateStore(store,seed,{version='5.0.0'}={}){
   const report=[];
   for(const [name,keyFn] of Object.entries(keyFor)){
     const before=store.get(name,[]);
@@ -42,7 +44,7 @@ export function migrateStore(store,seed,{version='4.0.0-alpha.2.1'}={}){
     store.set(name,merged);
     if(merged.length!==before.length) report.push({name,before:before.length,after:merged.length});
   }
-  for(const name of ['importBatches','provisioningQueue','audit','traces','memory','failures','passwordResetRequests']){
+  for(const name of ['importBatches','provisioningQueue','audit','traces','memory','failures','passwordResetRequests','artifacts']){
     if(store.get(name)==null) store.set(name,clone(seed[name]||[]));
   }
   store.set('schemaVersion',version);

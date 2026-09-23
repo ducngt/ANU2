@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "ANU2",
-    "version": "V4.0 alpha 2.1"
+    "version": "V5.0"
   },
   "common": {
     "logout": "Đăng xuất",
@@ -36,7 +36,7 @@
     "dashboard_system": "Tổng quan hệ thống",
     "imports": "Nhập dữ liệu",
     "master": "Dữ liệu nền tảng",
-    "accounts": "Người dùng & phân quyền",
+    "accounts": "Người dùng & quản trị",
     "work": "Công việc",
     "settings": "AI & mô hình",
     "audit": "Nhật ký hệ thống",
@@ -58,7 +58,8 @@
     "learning": "Môn học & nhiệm vụ",
     "documents_knowledge": "Tài liệu & tri thức",
     "dashboard_staff": "Công việc hôm nay",
-    "business_data": "Dữ liệu nghiệp vụ"
+    "business_data": "Dữ liệu nghiệp vụ",
+    "domains": "Miền vận hành"
   },
   "settings": {
     "title": "AI & mô hình",

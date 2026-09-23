@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "ANU2",
-    "version": "V4.0 alpha 2.1"
+    "version": "V5.0"
   },
   "common": {
     "logout": "退出登录",
@@ -36,7 +36,7 @@
     "dashboard_system": "系统概览",
     "imports": "数据导入",
     "master": "基础数据",
-    "accounts": "用户与权限",
+    "accounts": "用户与管理",
     "work": "工作",
     "settings": "AI与模型",
     "audit": "系统日志",
@@ -58,7 +58,8 @@
     "learning": "课程与任务",
     "documents_knowledge": "资料与知识",
     "dashboard_staff": "今日工作",
-    "business_data": "业务数据"
+    "business_data": "业务数据",
+    "domains": "运行领域"
   },
   "settings": {
     "title": "AI与模型",
