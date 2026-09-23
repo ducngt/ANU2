@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "ANU2",
-    "version": "V4.0 alpha 2"
+    "version": "V4.0 alpha 2.1"
   },
   "common": {
     "logout": "Đăng xuất",
@@ -16,7 +16,8 @@
     "password": "Mật khẩu",
     "submit": "Đăng nhập",
     "demo": "Tài khoản thử nghiệm",
-    "invalid": "Sai tài khoản hoặc mật khẩu"
+    "invalid": "Sai tài khoản hoặc mật khẩu",
+    "forgot": "Quên mật khẩu?"
   },
   "context": {
     "workingAs": "Đang làm việc với vai trò"
@@ -209,5 +210,13 @@
     "test": "Kiểm tra kết nối",
     "healthy": "Hoạt động",
     "unknown": "Chưa kiểm tra"
+  },
+  "recovery": {
+    "identifier": "Nhập tài khoản, email hoặc số điện thoại",
+    "channel": "Chọn kênh nhận mã: email hoặc sms",
+    "sent": "Đã gửi hướng dẫn đặt lại mật khẩu tới",
+    "demo": "Chế độ thử nghiệm: GitHub Pages chưa có cổng gửi SMS/email. Mã thử nghiệm:",
+    "newPassword": "Nhập mật khẩu mới",
+    "changed": "Đã đổi mật khẩu. Hãy đăng nhập lại."
   }
 }

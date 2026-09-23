@@ -1,9 +1,9 @@
 const assignment=(id,role,tier,type,scope,authority=[],dataScopes=[scope])=>({id,role,tier,scope:{type,id:scope},authority,dataScopes,validFrom:'2026-09-01',validUntil:null,status:'ACTIVE'});
 export const seed = {
   users: [
-    {id:'USR-ADMIN',username:'admin',password:'Admin123!',displayName:'System Administrator',status:'ACTIVE',assignments:[assignment('RA-ADMIN','SYSTEM_ADMIN',0,'SYSTEM','ANU2',['SYSTEM_ADMIN'],['SYSTEM'])]},
-    {id:'USR-RECTOR',username:'rector',password:'Rector123!',displayName:'Rector Demo',status:'ACTIVE',assignments:[assignment('RA-RECTOR','RECTOR',1,'UNIVERSITY','ANU',['INSTITUTIONAL_RECOMMEND','INSTITUTIONAL_APPROVE'],['*'])]},
-    {id:'USR-EXEC',username:'executive',password:'Executive123!',displayName:'Executive Demo',status:'ACTIVE',assignments:[assignment('RA-EXEC','VICE_RECTOR',1,'UNIVERSITY','ANU',['INSTITUTIONAL_RECOMMEND','INSTITUTIONAL_APPROVE'],['*'])]},
+    {id:'USR-ADMIN',username:'admin',password:'Admin123!',displayName:'System Administrator',email:'admin@anu.edu.vn',phone:'+84900000001',status:'ACTIVE',assignments:[assignment('RA-ADMIN','SYSTEM_ADMIN',0,'SYSTEM','ANU2',['SYSTEM_ADMIN'],['SYSTEM'])]},
+    {id:'USR-RECTOR',username:'rector',password:'Rector123!',displayName:'Rector Demo',email:'rector@anu.edu.vn',phone:'+84900000002',status:'ACTIVE',assignments:[assignment('RA-RECTOR','RECTOR',1,'UNIVERSITY','ANU',['INSTITUTIONAL_RECOMMEND','INSTITUTIONAL_APPROVE'],['*'])]},
+    {id:'USR-EXEC',username:'executive',password:'Executive123!',displayName:'Executive Demo',email:'vice.rector@anu.edu.vn',phone:'+84900000003',status:'ACTIVE',assignments:[assignment('RA-EXEC','VICE_RECTOR',1,'UNIVERSITY','ANU',['INSTITUTIONAL_RECOMMEND','INSTITUTIONAL_APPROVE'],['*'])]},
     {id:'USR-MANAGER',username:'manager',password:'Manager123!',displayName:'Manager Demo',status:'ACTIVE',assignments:[assignment('RA-MGR','DEPARTMENT_HEAD',2,'UNIT','FACULTY-ENG',['UNIT_RECOMMEND','UNIT_APPROVE'],['FACULTY-ENG'])]},
     {id:'USR-LECTURER',username:'lecturer',password:'Lecturer123!',displayName:'Lecturer Demo',status:'ACTIVE',assignments:[assignment('RA-LECT','LECTURER',3,'UNIT','FACULTY-ENG',['TEACHING'],['FACULTY-ENG','PUBLIC'])]},
     {id:'USR-RESEARCH',username:'researcher',password:'Research123!',displayName:'Researcher Demo',status:'ACTIVE',assignments:[assignment('RA-RES','RESEARCHER',3,'PROJECT','PROJECT-AI-2026',['RESEARCH'],['PROJECT-AI-2026','PUBLIC'])]},
@@ -63,13 +63,22 @@ export const seed = {
     {id:'ANU',code:'ANU',name:'Trường Đại học',type:'UNIVERSITY',parentId:'',mission:'Quản trị và phát triển toàn trường',functions:['Định hướng chiến lược','Đào tạo','Nghiên cứu','Phục vụ xã hội'],responsibilities:['Xác lập mục tiêu và chính sách','Phân bổ nguồn lực','Giám sát kết quả'],managerRole:'RECTOR',status:'ACTIVE'},
     {id:'BOARD',code:'BOARD',name:'Ban Giám hiệu',type:'EXECUTIVE_BOARD',parentId:'ANU',mission:'Điều hành toàn trường',functions:['Điều hành chiến lược','Ra quyết định theo thẩm quyền','Điều phối liên đơn vị'],responsibilities:['Theo dõi toàn bộ công việc và dữ liệu','Phê duyệt trong phạm vi thẩm quyền','Chịu trách nhiệm kết quả toàn trường'],managerRole:'RECTOR',status:'ACTIVE'},
     {id:'FACULTY-ENG',code:'FACULTY-ENG',name:'Khoa Kỹ thuật',type:'FACULTY',parentId:'ANU',mission:'Đào tạo và nghiên cứu lĩnh vực kỹ thuật',functions:['Đào tạo','Nghiên cứu','Quản lý người học'],responsibilities:['Tổ chức chương trình đào tạo','Quản lý giảng viên','Triển khai nghiên cứu'],managerRole:'DEPARTMENT_HEAD',status:'ACTIVE'},
-    {id:'OFFICE-ACADEMIC',code:'OFFICE-ACADEMIC',name:'Phòng Đào tạo',type:'OFFICE',parentId:'ANU',mission:'Quản lý hoạt động đào tạo',functions:['Kế hoạch đào tạo','Quản lý chương trình','Quản lý dữ liệu đào tạo'],responsibilities:['Bảo đảm lịch học và chương trình','Theo dõi dữ liệu học vụ'],managerRole:'DEPARTMENT_HEAD',status:'ACTIVE'}
+    {id:'OFFICE-ACADEMIC',code:'OFFICE-ACADEMIC',name:'Phòng Đào tạo',type:'OFFICE',parentId:'ANU',mission:'Quản lý hoạt động đào tạo',functions:['Kế hoạch đào tạo','Quản lý chương trình','Quản lý dữ liệu đào tạo'],responsibilities:['Bảo đảm lịch học và chương trình','Theo dõi dữ liệu học vụ'],managerRole:'DEPARTMENT_HEAD',status:'ACTIVE'},
+    {id:'OFFICE-HR',code:'OFFICE-HR',name:'Phòng Tổ chức - Nhân sự',type:'OFFICE',parentId:'ANU',mission:'Quản trị nguồn nhân lực',functions:['Tổ chức bộ máy','Nhân sự','Phát triển đội ngũ'],responsibilities:['Quản lý hồ sơ nhân sự','Tham mưu cơ cấu tổ chức','Theo dõi vị trí việc làm'],managerRole:'DEPARTMENT_HEAD',status:'ACTIVE'},
+    {id:'OFFICE-FINANCE',code:'OFFICE-FINANCE',name:'Phòng Tài chính',type:'OFFICE',parentId:'ANU',mission:'Quản trị tài chính',functions:['Ngân sách','Kế toán','Phân tích tài chính'],responsibilities:['Lập và theo dõi ngân sách','Báo cáo tài chính','Kiểm soát chi'],managerRole:'DEPARTMENT_HEAD',status:'ACTIVE'},
+    {id:'OFFICE-FACILITIES',code:'OFFICE-FACILITIES',name:'Phòng Cơ sở vật chất',type:'OFFICE',parentId:'ANU',mission:'Quản trị hạ tầng và tài sản',functions:['Cơ sở vật chất','Tài sản','Bảo trì'],responsibilities:['Quản lý không gian','Quản lý tài sản','Lập kế hoạch bảo trì'],managerRole:'DEPARTMENT_HEAD',status:'ACTIVE'},
+    {id:'OFFICE-RESEARCH',code:'OFFICE-RESEARCH',name:'Phòng Khoa học và Công nghệ',type:'OFFICE',parentId:'ANU',mission:'Quản lý nghiên cứu và đổi mới',functions:['Nghiên cứu','Đổi mới sáng tạo','Chuyển giao'],responsibilities:['Quản lý đề tài','Theo dõi kết quả nghiên cứu','Hỗ trợ chuyển giao'],managerRole:'DEPARTMENT_HEAD',status:'ACTIVE'}
   ],
   personnel:[
-    {id:'PER-001',employeeCode:'CB001',fullName:'Nguyễn Văn A',email:'nva@anu.edu.vn',unit:'BOARD',position:'Phó Hiệu trưởng',status:'ACTIVE',source:'seed'}
+    {id:'PER-001',employeeCode:'CB001',fullName:'Nguyễn Văn A',email:'nva@anu.edu.vn',unit:'BOARD',position:'Phó Hiệu trưởng',status:'ACTIVE',source:'seed-demo'},
+    {id:'PER-002',employeeCode:'CB002',fullName:'Trần Minh B',email:'tmb@anu.edu.vn',unit:'FACULTY-ENG',position:'Trưởng khoa',status:'ACTIVE',source:'seed-demo'},
+    {id:'PER-003',employeeCode:'CB003',fullName:'Lê Thu C',email:'ltc@anu.edu.vn',unit:'FACULTY-ENG',position:'Giảng viên',status:'ACTIVE',source:'seed-demo'},
+    {id:'PER-004',employeeCode:'CB004',fullName:'Phạm D',email:'pd@anu.edu.vn',unit:'OFFICE-ACADEMIC',position:'Chuyên viên',status:'ACTIVE',source:'seed-demo'}
   ],
   students:[
-    {id:'STU-001',studentCode:'SV20260001',fullName:'Lê Minh',email:'minh@anu.edu.vn',program:'PROGRAM-AI',faculty:'FACULTY-ENG',cohort:'2026',status:'ACTIVE',source:'seed'}
+    {id:'STU-001',studentCode:'SV20260001',fullName:'Lê Minh',email:'minh@anu.edu.vn',program:'PROGRAM-AI',faculty:'FACULTY-ENG',cohort:'2026',status:'ACTIVE',source:'seed-demo'},
+    {id:'STU-002',studentCode:'SV20260002',fullName:'Ngô Lan',email:'lan@anu.edu.vn',program:'PROGRAM-AI',faculty:'FACULTY-ENG',cohort:'2026',status:'ACTIVE',source:'seed-demo'},
+    {id:'STU-003',studentCode:'SV20250011',fullName:'Đỗ Nam',email:'nam@anu.edu.vn',program:'PROGRAM-IT',faculty:'FACULTY-ENG',cohort:'2025',status:'ACTIVE',source:'seed-demo'}
   ],
   facilities:[
     {id:'BLD-A1',type:'BUILDING',name:'Tòa nhà A1',campus:'CAMPUS-A',grossArea:5200,usableArea:4100,floors:5,status:'ACTIVE'},
@@ -77,5 +86,16 @@ export const seed = {
   ],
   assets:[{id:'AST-001',assetCode:'GPU-001',name:'GPU Server',category:'COMPUTE',location:'ROOM-A101',ownerUnit:'FACULTY-ENG',condition:'GOOD',status:'ACTIVE'}],
   inventory:[{id:'INV-001',itemCode:'VT-001',name:'Cáp mạng Cat6',category:'NETWORK',unit:'cuộn',quantityOnHand:25,minimumLevel:10,warehouse:'WH-A',status:'ACTIVE'}],
-  importBatches:[], provisioningQueue:[], audit:[], traces:[], memory:[], failures:[]
+  programs:[
+    {id:'PROGRAM-AI',code:'AI',name:'Trí tuệ nhân tạo',level:'UNDERGRADUATE',ownerUnit:'FACULTY-ENG',status:'ACTIVE',source:'seed-demo'},
+    {id:'PROGRAM-IT',code:'IT',name:'Công nghệ thông tin',level:'UNDERGRADUATE',ownerUnit:'FACULTY-ENG',status:'ACTIVE',source:'seed-demo'}
+  ],
+  courses:[
+    {id:'COURSE-AI101',code:'AI101',name:'Nhập môn Trí tuệ nhân tạo',programId:'PROGRAM-AI',credits:3,ownerUnit:'FACULTY-ENG',status:'ACTIVE',source:'seed-demo'},
+    {id:'COURSE-ML201',code:'ML201',name:'Học máy',programId:'PROGRAM-AI',credits:3,ownerUnit:'FACULTY-ENG',status:'ACTIVE',source:'seed-demo'}
+  ],
+  researchProjects:[
+    {id:'PROJECT-AI-2026',code:'PROJECT-AI-2026',name:'AI trong giáo dục kỹ thuật',ownerUnit:'FACULTY-ENG',principalInvestigator:'USR-RESEARCH',status:'ACTIVE',source:'seed-demo'}
+  ],
+  importBatches:[], provisioningQueue:[], audit:[], traces:[], memory:[], failures:[], passwordResetRequests:[]
 };

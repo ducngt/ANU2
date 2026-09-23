@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "ANU2",
-    "version": "V4.0 alpha 2"
+    "version": "V4.0 alpha 2.1"
   },
   "common": {
     "logout": "Sign out",
@@ -16,7 +16,8 @@
     "password": "Password",
     "submit": "Sign in",
     "demo": "Demo accounts",
-    "invalid": "Invalid username or password"
+    "invalid": "Invalid username or password",
+    "forgot": "Forgot password?"
   },
   "context": {
     "workingAs": "Working as"
@@ -209,5 +210,13 @@
     "test": "Test connection",
     "healthy": "Healthy",
     "unknown": "Not tested"
+  },
+  "recovery": {
+    "identifier": "Enter username, email, or phone number",
+    "channel": "Choose reset channel: email or sms",
+    "sent": "Password reset instructions were sent to",
+    "demo": "Test mode: GitHub Pages has no SMS/email gateway yet. Test token:",
+    "newPassword": "Enter a new password",
+    "changed": "Password changed. Please sign in again."
   }
 }

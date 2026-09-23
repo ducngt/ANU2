@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "ANU2",
-    "version": "V4.0 alpha 2"
+    "version": "V4.0 alpha 2.1"
   },
   "common": {
     "logout": "退出登录",
@@ -16,7 +16,8 @@
     "password": "密码",
     "submit": "登录",
     "demo": "演示账号",
-    "invalid": "账号或密码错误"
+    "invalid": "账号或密码错误",
+    "forgot": "忘记密码？"
   },
   "context": {
     "workingAs": "当前角色"
@@ -209,5 +210,13 @@
     "test": "测试连接",
     "healthy": "正常",
     "unknown": "未测试"
+  },
+  "recovery": {
+    "identifier": "请输入用户名、邮箱或手机号",
+    "channel": "选择接收方式：email 或 sms",
+    "sent": "密码重置说明已发送至",
+    "demo": "测试模式：GitHub Pages 尚未配置短信/邮件网关。测试令牌：",
+    "newPassword": "请输入新密码",
+    "changed": "密码已修改，请重新登录。"
   }
 }

@@ -32,6 +32,14 @@ export class ModelGatewayBox {
       this.config.health='HEALTHY'; this.config.lastTest=new Date().toISOString(); this.config.lastError=null; return result;
     }catch(e){ this.config.health='FAILED'; this.config.lastTest=new Date().toISOString(); this.config.lastError=e.message; throw e; }
   }
+  async testInference(){
+    const started=Date.now();
+    const r=await this.reason({system:'You are a connectivity test. Answer briefly and exactly.',user:'Reply with: ANU-AI-OK'});
+    const text=String(r.text||'').trim();
+    if(!text) throw new Error('Provider returned an empty inference response');
+    this.config.health='HEALTHY'; this.config.lastTest=new Date().toISOString(); this.config.lastError=null;
+    return {...r,latencyMs:Date.now()-started,text};
+  }
   async reason({system,user}){
     const c=this.config;
     if(c.provider==='mock') return {text:this.mock(user),model:'mock-analyzer',provider:'mock'};
