@@ -3,7 +3,7 @@ export class MultimodalProcessor {
   async process(artifactId,{prompt='Đọc/quan sát nội dung này, trích xuất các dữ kiện quan trọng, cấu trúc dữ liệu có thể sử dụng, và nêu giới hạn nếu có.'}={}){
     const artifact=this.artifacts.get(artifactId); if(!artifact) throw new Error('ARTIFACT_NOT_FOUND');
     if(artifact.processingStatus==='TEXT_EXTRACTED' || artifact.processingStatus==='AI_PROCESSED') return artifact;
-    const file=this.artifacts.file(artifactId); if(!file) throw new Error('FILE_BYTES_NOT_IN_SESSION: Hãy chọn lại tệp sau khi tải lại trang. GitHub Pages chỉ giữ bytes tệp trong phiên hiện tại.');
+    const file=await this.artifacts.file(artifactId); if(!file){ this.artifacts.updateProcessing(artifactId,{bytesState:'MISSING',processingError:'FILE_BYTES_MISSING'}); throw new Error('FILE_BYTES_MISSING: Tệp này được tạo ở phiên V5.2 cũ hoặc dữ liệu trình duyệt đã bị xóa. Hãy chọn lại đúng tệp một lần; V5.2.1 sẽ lưu bytes trong IndexedDB để dùng lại sau khi tải lại trang.'); }
     this.artifacts.updateProcessing(artifactId,{processingStatus:'PROCESSING',processingError:null});
     try{
       const r=await this.model.analyzeFile({file,artifact,prompt});

@@ -45,3 +45,12 @@ test('V5.2 model gateway never pretends real multimodal processing when mock is 
   assert.equal(r.mode,'SIMULATED_MULTIMODAL');
   assert.match(r.text,/MÔ PHỎNG/);
 });
+
+test('V5.2.1 artifact bytes API is async and returns same-session file',async()=>{
+  const s=new BrowserStore(`v521-bytes-${Math.random()}`); migrateStore(s,seed,{version:'5.2.1'});
+  const arts=new ArtifactStore(s); const file=new File([new Uint8Array([9,8,7])],'persist.jpg',{type:'image/jpeg'});
+  const a=await arts.ingest(file,{uploadedBy:'USR-ADMIN'});
+  const got=await arts.file(a.id);
+  assert.ok(got);
+  assert.equal(got.name,'persist.jpg');
+});
