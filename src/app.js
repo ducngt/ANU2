@@ -1,104 +1,91 @@
+import {BrowserStore} from './core/store.js';
+import {seed} from './core/seed.js';
 import {IdentityBox} from './boxes/identity-box.js';
-import {CapabilityRegistryBox} from './boxes/capability-registry-box.js';
-import {WireRegistryBox} from './boxes/wire-registry-box.js';
+import {ContextBox} from './boxes/context-box.js';
 import {AuditBox} from './boxes/audit-box.js';
+import {CapabilityRegistryBox} from './boxes/capability-registry-box.js';
+import {RegistryBox} from './boxes/registry-box.js';
 import {PolicyBox} from './boxes/policy-box.js';
+import {KnowledgeBox} from './boxes/knowledge-box.js';
+import {EvidenceBox} from './boxes/evidence-box.js';
+import {ProvenanceBox} from './boxes/provenance-box.js';
+import {MemoryBox} from './boxes/memory-box.js';
+import {FailureBox} from './boxes/failure-box.js';
+import {ModelGatewayBox} from './boxes/model-gateway-box.js';
+import {AgentRuntime} from './agents/agent-runtime.js';
 import {AdminAssembly} from './assemblies/admin-assembly.js';
 import {SBBSRuntime} from './assemblies/sbbs-runtime.js';
 
-const identity=new IdentityBox();
-const capabilities=new CapabilityRegistryBox();
-const wires=new WireRegistryBox();
-const audit=new AuditBox();
-const policy=new PolicyBox();
-const adminAssembly=new AdminAssembly({identity,capabilities,audit,policy});
-const runtime=new SBBSRuntime()
- .registerBox('SBBox-Identity',identity)
- .registerBox('SBBox-CapabilityRegistry',capabilities)
- .registerBox('SBBox-WireRegistry',wires)
- .registerBox('SBBox-Audit',audit)
- .registerBox('SBBox-Policy',policy)
- .registerAssembly('AdminGovernance',adminAssembly);
+const store=new BrowserStore('anu2-v2');
+const audit=new AuditBox(store); const identity=new IdentityBox(store,seed); const contextBox=new ContextBox(store,audit);
+const capabilities=new CapabilityRegistryBox(store,seed); const agents=new RegistryBox(store,'agents',seed.agents); const tools=new RegistryBox(store,'tools',seed.tools); const wires=new RegistryBox(store,'wires',seed.wires);
+const policy=new PolicyBox(); const knowledge=new KnowledgeBox(store,seed); const evidence=new EvidenceBox(); const provenance=new ProvenanceBox(); const memory=new MemoryBox(store); const failure=new FailureBox(store,audit); const model=new ModelGatewayBox();
+const agentRuntime=new AgentRuntime({store,capabilities,agents,policy,knowledge,evidence,model,audit,provenance,memory,failure});
+const adminAssembly=new AdminAssembly({identity,capabilities,wires,audit,policy});
+const sbbs=new SBBSRuntime().registerBox('SBBox-Identity',identity).registerBox('SBBox-Context',contextBox).registerBox('SBBox-CapabilityRegistry',capabilities).registerBox('SBBox-Knowledge',knowledge).registerBox('SBBox-Evidence',evidence).registerBox('SBBox-Policy',policy).registerBox('SBBox-Audit',audit).registerBox('SBBox-Provenance',provenance).registerBox('SBBox-UniversityMemory',memory).registerBox('SBBox-Failure',failure).registerBox('SBBox-ModelGateway',model).registerAssembly('AdminGovernance',adminAssembly).registerAssembly('AgentExecution',agentRuntime);
 
-const state={actor:null,view:'dashboard'};
-const app=document.querySelector('#app');
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const state={user:null,view:'dashboard',lang:store.get('lang','vi'),lastResult:null,help:false};
+const $=s=>document.querySelector(s); const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const txt={vi:{login:'Đăng nhập',logout:'Đăng xuất',dashboard:'Tổng quan',assistant:'Không gian AI',research:'Nghiên cứu',knowledge:'Tri thức',decisions:'Quyết định',capabilities:'Năng lực',identities:'Danh tính & Quyền',agents:'Agents',wires:'Smart Wires',audit:'Audit & Provenance',memory:'University Memory',settings:'AI & Cài đặt',architecture:'Kiến trúc SBBS',help:'Trợ giúp',working:'Đang làm việc với vai trò',run:'Thực hiện',switch:'Chuyển ngữ cảnh'},en:{login:'Sign in',logout:'Sign out',dashboard:'Overview',assistant:'AI Workspace',research:'Research',knowledge:'Knowledge',decisions:'Decisions',capabilities:'Capabilities',identities:'Identity & Authority',agents:'Agents',wires:'Smart Wires',audit:'Audit & Provenance',memory:'University Memory',settings:'AI & Settings',architecture:'SBBS Architecture',help:'Help',working:'Working as',run:'Run',switch:'Switch context'}};
+const t=k=>txt[state.lang]?.[k]||k;
+function ctx(){ return state.user?contextBox.active(state.user):null; }
+function roleLabel(c){ return `${c.role} · Tier ${c.tier} · ${c.scope?.type}:${c.scope?.id}`; }
+function isAdmin(){return ctx()?.role==='SYSTEM_ADMIN'}
+function menu(){ const c=ctx(); const common=[['dashboard',t('dashboard')],['assistant',t('assistant')],['knowledge',t('knowledge')],['research',t('research')],['help',t('help')]]; if(c?.tier===1) common.splice(3,0,['decisions',t('decisions')]); if(c?.tier===2) common.splice(3,0,['decisions',t('decisions')]); if(isAdmin()) return [['dashboard',t('dashboard')],['identities',t('identities')],['capabilities',t('capabilities')],['agents',t('agents')],['wires',t('wires')],['audit',t('audit')],['memory',t('memory')],['settings',t('settings')],['architecture',t('architecture')],['help',t('help')]]; return [...common,['audit',t('audit')],['settings',t('settings')]]; }
+function login(){ document.body.className='login-body'; $('#app').innerHTML=`<div class="login-card"><div class="logo">ANU2</div><h1>AI-Native University</h1><p>SBBS v2.0 · Role-Aware Operational Workspace</p><label>Username<input id="username" value="admin"></label><label>Password<input id="password" type="password" value="Admin123!"></label><button id="login-btn" class="primary">${t('login')}</button><div class="demo"><b>Demo accounts</b><br>admin / Admin123!<br>executive / Executive123!<br>manager / Manager123!<br>researcher / Research123!<br>multirole / MultiRole123!</div><div class="warning">GitHub Pages runtime là bản reference có persistence trong trình duyệt. Không coi client-side authorization là security boundary production.</div></div>`; $('#login-btn').onclick=()=>{const u=identity.authenticate($('#username').value.trim(),$('#password').value); if(!u)return alert('Sai tài khoản hoặc mật khẩu'); state.user=u; state.view='dashboard'; audit.record({actorId:u.id,action:'LOGIN',resourceId:'browser-session'}); render();}; }
+function shell(content){ document.body.className=''; const c=ctx(); $('#app').innerHTML=`<div class="layout"><aside><div class="brand"><b>ANU2</b><span>SBBS v2.0</span></div><nav>${menu().map(([id,l])=>`<button data-view="${id}" class="${state.view===id?'active':''}">${l}</button>`).join('')}</nav><div class="aside-foot">Operational workspace<br><small>Smart Boxes · Wires · Assemblies · Components</small></div></aside><main><header><div><div class="user">${esc(state.user.displayName)}</div><div class="context-line">${t('working')}: <b>${esc(roleLabel(c))}</b></div></div><div class="header-actions"><select id="context-select">${state.user.assignments.map(a=>`<option value="${a.id}" ${a.id===c.id?'selected':''}>${esc(a.role)} — ${esc(a.scope.id)}</option>`).join('')}</select><button id="lang">${state.lang==='vi'?'EN':'VI'}</button><button id="help-top">?</button><button id="logout">${t('logout')}</button></div></header><section class="content">${content}</section></main></div>${state.help?helpDrawer():''}`;
+ document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{state.view=b.dataset.view;state.help=false;render()}); $('#context-select').onchange=e=>{contextBox.switch(state.user,e.target.value); state.view='dashboard';render()}; $('#lang').onclick=()=>{state.lang=state.lang==='vi'?'en':'vi';store.set('lang',state.lang);render()}; $('#help-top').onclick=()=>{state.help=!state.help;render()}; $('#logout').onclick=()=>{audit.record({actorId:state.user.id,action:'LOGOUT'});state.user=null;render()}; bind(); }
+function card(title,body,cls=''){return `<div class="card ${cls}"><h3>${title}</h3>${body}</div>`}
+function dashboard(){ const c=ctx(); const role=c.role; let blocks=''; if(role==='SYSTEM_ADMIN') blocks=`${metric('Identities',identity.list().length)}${metric('Capabilities',capabilities.list().length)}${metric('Agents',agents.list().length)}${metric('Audit events',audit.list().length)}`; else if(c.tier===1) blocks=`${metric('Pending decisions',store.get('decisions',[]).filter(x=>x.status==='PENDING').length)}${metric('Recommendations',agentRuntime.traces().filter(x=>x.handoff?.required).length)}${metric('Known capabilities',capabilities.list().length)}${metric('University memory',memory.list().length)}`; else blocks=`${metric('My scope',c.scope.id)}${metric('Available agents',availableAgents().length)}${metric('Research runs',agentRuntime.traces().filter(x=>x.actorId===state.user.id).length)}${metric('Knowledge records',visibleKnowledge().length)}`;
+ return `<div class="page-head"><div><h1>${t('dashboard')}</h1><p>${esc(roleLabel(c))}</p></div><span class="badge">${role}</span></div><div class="metrics">${blocks}</div>${card('Việc có thể làm trong ngữ cảnh này',quickActions())}${card('Trạng thái hệ thống',`<div class="status-grid"><div><b>Identity</b><span class="ok">ACTIVE</span></div><div><b>Context</b><span class="ok">SERVER-AUTHORITATIVE in production / browser-reference here</span></div><div><b>SBBS Runtime</b><span class="ok">${sbbs.snapshot().boxes.length} boxes · ${sbbs.snapshot().assemblies.length} assemblies</span></div><div><b>Human decision boundary</b><span class="ok">ENFORCED</span></div></div>`)}<div class="subtle">ANU/SBBS architecture is available in Help/Architecture for authorized users; the main workspace prioritizes operations.</div>`; }
+function metric(l,v){return `<div class="metric"><span>${esc(l)}</span><strong>${esc(v)}</strong></div>`}
+function quickActions(){ const acts=isAdmin()?[['identities','Tạo/phân quyền tài khoản'],['capabilities','Quản trị Capability Registry'],['agents','Kiểm tra Agent Registry'],['audit','Xem Audit & Provenance']]:[['assistant','Giao nhiệm vụ cho AI'],['research','Nghiên cứu dựa trên bằng chứng'],['knowledge','Tra cứu tri thức theo scope'],['help','Hướng dẫn theo ngữ cảnh']]; return `<div class="quick">${acts.map(([v,l])=>`<button data-jump="${v}">${l}</button>`).join('')}</div>`; }
+function assistant(){ const r=state.lastResult; return `<div class="page-head"><div><h1>${t('assistant')}</h1><p>Task Router → Agent Runtime → Capability → Smart Box/Tool → Policy → Evidence → Handoff</p></div></div>${card('Giao nhiệm vụ',`<textarea id="task" rows="5" placeholder="Ví dụ: MU là đội bóng nước nào? / ANU quy định dữ liệu Sống-Sạch-Đúng-Đủ như thế nào? / Đề xuất mở ngành AI mới cho trường"></textarea><div class="row"><button class="primary" id="run-task">${t('run')}</button><span id="run-state"></span></div>`)}${r?resultCard(r):''}`; }
+function resultCard(r){ if(r.status==='FAILED'||r.failure) return card('Safe Failure',`<div class="danger-box"><b>${esc(r.failure?.reason||'FAILED')}</b><p>FAIL → DETECT → STOP → PRESERVE STATE → HANDOVER → HUMAN → RECOVER → LEARN</p></div>`); return `${card('Kết quả',`<div class="result-meta"><span>${esc(r.route.type)}</span><span>${esc(r.plan.agent)}</span><span>${esc(r.model.provider)}:${esc(r.model.model)}</span><span class="${r.handoff.required?'warn':'ok'}">${r.status}</span></div><div class="answer">${esc(r.answer)}</div>${r.handoff.required?'<div class="warning">Kết quả này cần con người xem xét/phê duyệt theo policy. Agent không tự tạo thẩm quyền quyết định.</div>':''}`)}${card('Evidence & Trace',`<div class="two-col"><div><h4>Evidence</h4>${r.evidence.length?r.evidence.map(e=>`<div class="evidence"><b>${esc(e.title)}</b><small>${esc(e.provenance?.source)}</small></div>`).join(''):'<span class="muted">General fact: không dùng institutional knowledge.</span>'}</div><div><h4>Capabilities</h4>${r.plan.caps.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}<h4>Tools</h4>${r.plan.tools.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div></div><details><summary>Provenance</summary><pre>${esc(JSON.stringify(r.provenance,null,2))}</pre></details>`)}`; }
+function visibleKnowledge(){return knowledge.list().filter(k=>['PUBLIC',ctx()?.scope?.id,...(ctx()?.dataScopes||[])].includes(k.scope))}
+function knowledgeView(){ return `<div class="page-head"><div><h1>${t('knowledge')}</h1><p>ONE UNIVERSITY — ONE KNOWLEDGE UNIVERSE — MANY CONTEXTS</p></div></div>${card('Tri thức khả dụng',`<input id="knowledge-filter" placeholder="Tìm tri thức..."><div id="knowledge-list">${knowledgeRows(visibleKnowledge())}</div>`)}`; }
+function knowledgeRows(rows){return rows.map(k=>`<div class="knowledge-item"><div><b>${esc(k.title)}</b><p>${esc(k.text)}</p></div><div><span class="chip">${esc(k.scope)}</span><small>${esc(k.provenance?.source)}</small></div></div>`).join('')||'<div class="muted">Không có record trong scope hiện tại.</div>'}
+function research(){ return `<div class="page-head"><div><h1>${t('research')}</h1><p>Evidence → synthesis → recommendation → human review when required.</p></div></div>${card('Research workspace',`<textarea id="research-task" rows="5" placeholder="Nhập câu hỏi nghiên cứu hoặc yêu cầu phân tích..."></textarea><button class="primary" id="research-run">Chạy Research Assembly</button>`)}${state.lastResult?resultCard(state.lastResult):''}`; }
+function decisions(){ const c=ctx(); const items=store.get('decisions',[]); return `<div class="page-head"><div><h1>${t('decisions')}</h1><p>FACT → EVIDENCE → INFERENCE → RECOMMENDATION → HUMAN DECISION</p></div></div>${card('Decision queue',items.length?`<table><tr><th>ID</th><th>Title</th><th>Status</th><th>Action</th></tr>${items.map(d=>`<tr><td>${esc(d.id)}</td><td>${esc(d.title)}</td><td>${esc(d.status)}</td><td>${d.status==='PENDING'?`<button data-approve="${d.id}">Approve</button>`:''}</td></tr>`).join('')}</table>`:'<div class="muted">Chưa có quyết định chờ xử lý. Chạy một Management/Decision task để tạo recommendation cần human review.</div>')}${card('Authority',`Institutional approval: <b>${policy.canApproveInstitutional(c)?'ALLOWED':'DENIED'}</b>. System admin authority does not imply institutional decision authority.`)}`; }
+function identitiesView(){ const rows=identity.list(); return `<div class="page-head"><div><h1>${t('identities')}</h1><p>One identity · multiple assignments · one active Working Context.</p></div></div>${card('Tạo tài khoản',`<div class="form-grid"><label>Username<input id="new-u"></label><label>Password<input id="new-p" value="ChangeMe123!"></label><label>Tên hiển thị<input id="new-name"></label><label>Role<select id="new-role">${identity.roles().map(r=>`<option>${r.id}</option>`).join('')}</select></label><label>Tier<select id="new-tier"><option>0</option><option>1</option><option>2</option><option>3</option></select></label><label>Scope ID<input id="new-scope" value="UNIVERSITY"></label></div><button class="primary" id="create-user">Tạo Identity + Assignment</button>`)}${card('Danh sách Identity',`<table><tr><th>User</th><th>Assignments</th><th>Status</th><th></th></tr>${rows.map(u=>`<tr><td><b>${esc(u.displayName)}</b><br><small>${esc(u.username)} · ${esc(u.id)}</small></td><td>${u.assignments.map(a=>`<span class="pill">${esc(a.role)} / T${a.tier} / ${esc(a.scope.id)}</span>`).join('')}</td><td>${esc(u.status)}</td><td>${u.id!==state.user.id?`<button data-add-role="${u.id}">+ Role</button>`:''}</td></tr>`).join('')}</table>`)}`; }
+function capabilitiesView(){ return `<div class="page-head"><div><h1>${t('capabilities')}</h1><p>Capability Registry is first-class; Capability ≠ Authority.</p></div></div>${card('Register / version capability',`<div class="form-grid"><label>ID<input id="cap-id" placeholder="teaching.assess"></label><label>Name<input id="cap-name"></label><label>Smart Box<input id="cap-box" placeholder="SBBox-Assessment"></label><label>Authority<select id="cap-auth"><option>READ</option><option>ANALYZE</option><option>REASON</option><option>RECOMMEND</option><option>EXECUTE_DELEGATED</option></select></label><label>Scope<input id="cap-scope" value="CONTEXT"></label><label>Version<input id="cap-ver" value="2.0.0"></label></div><button class="primary" id="save-cap">Lưu Capability</button>`)}${card('Registry',`<table><tr><th>Capability</th><th>Box</th><th>Authority</th><th>Agents</th><th>Evidence</th><th>Status</th></tr>${capabilities.list().map(c=>`<tr><td><b>${esc(c.id)}</b><br><small>${esc(c.name)} · v${esc(c.version)}</small></td><td>${esc(c.box)}</td><td>${esc(c.authority)}</td><td>${(c.agents||[]).map(a=>`<span class="chip">${esc(a)}</span>`).join('')}</td><td>${esc(c.evidence)}</td><td>${esc(c.status)}</td></tr>`).join('')}</table>`)}`; }
+function agentsView(){return `<div class="page-head"><div><h1>${t('agents')}</h1><p>Agent = capability actor with identity, authority, scope, handoff and trace.</p></div></div>${agents.list().map(a=>card(a.name[state.lang]||a.name.en,`<p>${esc(a.purpose)}</p><div>${a.capabilities.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div><div class="authority">Recommend: ${a.authority.canRecommend?'yes':'no'} · Approve: ${a.authority.canApprove?'yes':'no'} · Decide: ${a.authority.canDecide?'yes':'no'}</div>`)).join('')}`}
+function wiresView(){return `<div class="page-head"><div><h1>${t('wires')}</h1><p>Smart Wires connect reusable capability boxes through explicit contracts.</p></div></div>${card('Wire Registry',`<table><tr><th>Wire</th><th>From</th><th>To</th><th>Contract</th><th>Policy</th></tr>${wires.list().map(w=>`<tr><td>${esc(w.id)}</td><td>${esc(w.from)}</td><td>${esc(w.to)}</td><td>${esc(w.contract)}</td><td>${esc(w.policy)}</td></tr>`).join('')}</table>`)}`}
+function auditView(){ const traces=agentRuntime.traces().filter(x=>isAdmin()||x.actorId===state.user.id||ctx().tier<=2); return `<div class="page-head"><div><h1>${t('audit')}</h1><p>Who · context · agent · capability · tool · model · policy · evidence · handoff.</p></div></div>${card('Agent Trace',traces.length?traces.slice(0,20).map(tr=>`<details><summary>${esc(tr.timestamp)} · ${esc(tr.route.type)} · ${esc(tr.status)}</summary><pre>${esc(JSON.stringify({actorId:tr.actorId,contextId:tr.contextId,agent:tr.plan.agent,capabilities:tr.plan.caps,tools:tr.plan.tools,model:tr.model,evidence:tr.evidence.map(e=>e.id),policyChecks:tr.policyChecks,handoff:tr.handoff,provenance:tr.provenance},null,2))}</pre></details>`).join(''):'<div class="muted">Chưa có trace.</div>')}${card('Audit events',`<table><tr><th>Time</th><th>Actor</th><th>Action</th><th>Resource</th></tr>${audit.list().slice(0,50).map(e=>`<tr><td>${esc(e.timestamp)}</td><td>${esc(e.actorId)}</td><td>${esc(e.action)}</td><td>${esc(e.resourceId||'')}</td></tr>`).join('')}</table>`)}`; }
+function memoryView(){return `<div class="page-head"><div><h1>${t('memory')}</h1><p>Technology may change; identity, knowledge, capability, evidence and responsibility persist.</p></div></div>${card('Institutional memory',memory.list().length?memory.list().slice(0,50).map(m=>`<details><summary>${esc(m.timestamp)} · ${esc(m.type)} · ${esc(m.route||'')}</summary><pre>${esc(JSON.stringify(m,null,2))}</pre></details>`).join(''):'<div class="muted">Chưa có learning record.</div>')}`; }
+function settingsView(){ const c=model.publicConfig(); return `<div class="page-head"><div><h1>${t('settings')}</h1><p>BYOK key stays in tab memory only and is never stored in LocalStorage/Audit.</p></div></div>${card('Model Gateway',`<div class="form-grid"><label>Provider<select id="provider"><option value="mock" ${c.provider==='mock'?'selected':''}>Mock</option><option value="openai" ${c.provider==='openai'?'selected':''}>OpenAI</option></select></label><label>Model<input id="model" value="${esc(c.model)}"></label><label>API Key<input id="api-key" type="password" placeholder="session only"></label><label>Max tokens<input id="max-tokens" type="number" value="${esc(c.maxTokens)}"></label></div><button class="primary" id="save-model">Áp dụng cho tab hiện tại</button><div class="subtle">OpenAI reasoning/new model payload adapts max_completion_tokens/developer role; standard models use max_tokens. No auth/rate-limit retry.</div>`)}${card('Portable state',`<button id="export">Export JSON</button> <button id="reset" class="danger-btn">Reset demo data</button>`)}`; }
+function architectureView(){return `<div class="page-head"><div><h1>${t('architecture')}</h1><p>ANU defines purpose/constitutional constraints; SBBS defines software composition.</p></div></div>${card('SBBS Runtime',`<pre>USER / HUMAN PURPOSE
+        ↓
+WORKING CONTEXT
+        ↓
+COMPONENTS
+        ↓
+ASSEMBLIES
+        ↓
+AGENT RUNTIME
+        ↓
+CAPABILITY RESOLVER
+   ↙             ↘
+SMART BOXES ↔ SMART WIRES
+        ↓
+POLICY / AUTHORITY
+        ↓
+ACTION → EVIDENCE → AUDIT → MEMORY → LEARNING
 
-function loginScreen(){
- app.innerHTML=`<div class="login"><h1>ANU2 — SBBS v2.0</h1><p class="muted">Executable reference implementation for GitHub Pages</p><label>Username</label><input id="u" value="admin"><label>Password</label><input id="p" type="password" value="Admin123!"><button class="btn" id="login">Đăng nhập</button><p class="small muted">Demo: admin / Admin123! · executive / Executive123! · manager / Manager123! · researcher / Research123!</p><div class="notice small">GitHub Pages là static hosting. Authentication/authorization trong bản này là reference/demo phía trình duyệt, không phải kiểm soát an ninh thể chế.</div></div>`;
- document.querySelector('#login').onclick=()=>{
-  const u=document.querySelector('#u').value.trim();
-  const pw=document.querySelector('#p').value;
-  const pass={admin:'Admin123!',executive:'Executive123!',manager:'Manager123!',researcher:'Research123!'};
-  const actor=identity.list().find(x=>x.username===u && pass[u]===pw);
-  if(!actor){alert('Sai tài khoản demo');return}
-  state.actor=actor;audit.record({actorId:actor.id,action:'LOGIN',resourceId:'browser-session'});render();
- };
-}
-
-function navButton(id,label){return `<button data-view="${id}" class="${state.view===id?'active':''}">${label}</button>`}
-function shell(content){
- const actor=state.actor; const assignment=actor.assignments?.[0];
- app.innerHTML=`<div class="app"><aside class="sidebar"><div class="brand">ANU2</div><div class="version">SBBS v2.0 · GitHub Pages</div><div class="nav">${navButton('dashboard','Dashboard')}${navButton('capabilities','Capability Registry')}${navButton('users','Identity & Roles')}${navButton('wires','Smart Wires')}${navButton('architecture','SBBS Architecture')}${navButton('audit','Audit & Trust')}</div></aside><main class="main"><div class="topbar"><div><b>${esc(actor.displayName)}</b><div class="small muted">${esc(assignment?.role)} · Tier ${esc(assignment?.tier)} · ${esc(assignment?.scope)}</div></div><div class="context"><button class="btn secondary" id="logout">Đăng xuất</button></div></div>${content}<div class="footer">ANU2 v2.0 — Smart Boxes · Smart Wires · Assemblies · Components</div></main></div>`;
- document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{state.view=b.dataset.view;render()});
- document.querySelector('#logout').onclick=()=>{audit.record({actorId:actor.id,action:'LOGOUT'});state.actor=null;render()};
-}
-
-function dashboard(){
- const snap=runtime.snapshot();
- return `<h1>Living University Dashboard</h1><div class="notice">ANU định nghĩa mục đích và vòng đời; SBBS định nghĩa cách đóng gói, kết nối, lắp ráp và biểu diễn năng lực.</div><div class="card"><h3>ANU Living Cycle</h3><div class="cycle">${['REALITY','DATA','KNOWLEDGE','CAPABILITY','INTELLIGENCE','DECISION','ACTION','EVIDENCE','LEARNING','NEW CAPABILITY'].map((x,i)=>`<span>${x}</span>${i<9?'<b class="arrow">→</b>':''}`).join('')}</div></div><div class="grid"><div class="card"><div class="muted">Smart Boxes</div><div class="metric">${snap.boxes.length}</div></div><div class="card"><div class="muted">Smart Wires</div><div class="metric">${wires.list().length}</div></div><div class="card"><div class="muted">Capabilities</div><div class="metric">${capabilities.list().length}</div></div><div class="card"><div class="muted">Identities</div><div class="metric">${identity.list().length}</div></div></div><div class="card"><h3>Constitutional checks</h3><table><tr><th>Invariant</th><th>Status</th></tr><tr><td>Capability ≠ Authority</td><td class="ok">Enforced by PolicyBox</td></tr><tr><td>System Admin ≠ institutional decision authority</td><td class="ok">Enforced</td></tr><tr><td>Action → Audit</td><td class="ok">Enabled</td></tr><tr><td>GitHub Pages security boundary</td><td class="danger">Demo/reference only</td></tr></table></div>`;
-}
-
-function capabilityView(){
- const can=policy.canManageCapabilities(state.actor);
- const rows=capabilities.list().map(c=>`<tr><td><b>${esc(c.id)}</b><br><span class="small muted">${esc(c.name)}</span></td><td>${esc(c.box)}</td><td>${esc(c.authority)}</td><td>${esc(c.scope)}</td><td>${esc(c.version)}</td><td><span class="tag">${esc(c.status)}</span></td></tr>`).join('');
- return `<h1>Capability Registry</h1><p class="muted">Capability được quản trị như contract tái sử dụng và được hiện thực bởi Smart Box/Agent/Tool phù hợp. Capability không tự sinh Authority.</p>${can?`<div class="card"><h3>Đăng ký / cập nhật Capability</h3><div class="form-grid"><label>ID<input id="cap-id" placeholder="research.synthesize"></label><label>Name<input id="cap-name" placeholder="Research Synthesize"></label><label>Smart Box<input id="cap-box" placeholder="SBBox-Research"></label><label>Authority<select id="cap-auth"><option>READ</option><option>ANALYZE</option><option>REASON</option><option>RECOMMEND</option><option>EXECUTE_DELEGATED</option></select></label><label>Scope<input id="cap-scope" value="CONTEXT"></label><label>Version<input id="cap-ver" value="2.0.0"></label></div><br><button class="btn" id="save-cap">Lưu Capability</button></div>`:''}<div class="card"><table><tr><th>Capability</th><th>Smart Box</th><th>Authority</th><th>Scope</th><th>Version</th><th>Status</th></tr>${rows}</table></div>`;
-}
-
-function usersView(){
- const can=policy.canManageUsers(state.actor);
- const rows=identity.list().map(u=>`<tr><td><b>${esc(u.displayName)}</b><br><span class="small muted">${esc(u.username)} · ${esc(u.id)}</span></td><td>${(u.assignments||[]).map(a=>`<span class="pill">${esc(a.role)} / T${esc(a.tier)} / ${esc(a.scope)}</span>`).join('')}</td><td>${esc(u.status)}</td></tr>`).join('');
- return `<h1>University Identity & Role Assignment</h1><p class="muted">Một Identity có thể có nhiều role assignment; quyền hiệu lực phụ thuộc active context, scope, authority và policy.</p>${can?`<div class="card"><h3>Tạo / phân quyền tài khoản</h3><div class="form-grid"><label>Username<input id="usr-name"></label><label>Tên hiển thị<input id="usr-display"></label><label>Role<select id="usr-role"><option>SYSTEM_ADMIN</option><option>VICE_RECTOR</option><option>DEPARTMENT_HEAD</option><option>LECTURER</option><option>RESEARCHER</option><option>STUDENT</option><option>STAFF</option></select></label><label>Tier<select id="usr-tier"><option>0</option><option>1</option><option>2</option><option>3</option></select></label><label>Scope<input id="usr-scope" value="UNIVERSITY"></label></div><br><button class="btn" id="save-user">Tạo Identity</button></div>`:`<div class="notice">Context hiện tại không có quyền quản trị Identity.</div>`}<div class="card"><table><tr><th>Identity</th><th>Assignments</th><th>Status</th></tr>${rows}</table></div>`;
-}
-
-function wiresView(){const rows=wires.list().map(w=>`<tr><td><b>${esc(w.id)}</b></td><td>${esc(w.from)}</td><td>→</td><td>${esc(w.to)}</td><td>${esc(w.contract)}</td><td>${esc(w.policy)}</td></tr>`).join('');return `<h1>Smart Wire Registry</h1><p class="muted">Smart Wires kết nối các năng lực qua contract ổn định, không phụ thuộc implementation bên trong Box.</p><div class="card"><table><tr><th>Wire</th><th>From</th><th></th><th>To</th><th>Contract</th><th>Policy</th></tr>${rows}</table></div>`}
-function architectureView(){return `<h1>SBBS Architecture</h1><div class="arch">ANU OPERATING PURPOSE
-        │
-        ▼
-SMART BLACK BOX SYSTEM
-        │
- ┌──────┼────────┐
- │      │        │
-BOXES  WIRES  ASSEMBLIES
- │      │        │
- └──────┼────────┘
-        │
-   COMPONENTS
-
-ANU cycle:
-REALITY → DATA → KNOWLEDGE → CAPABILITY → INTELLIGENCE
-→ DECISION → ACTION → EVIDENCE → LEARNING → NEW CAPABILITY
-
-Constitutional envelope:
-IDENTITY × TRUST × GOVERNANCE × PRIVACY
-Human purpose remains authoritative.</div><div class="card"><h3>Runtime snapshot</h3><pre>${esc(JSON.stringify(runtime.snapshot(),null,2))}</pre></div>`}
-function auditView(){const rows=audit.list().slice(0,100).map(e=>`<tr><td>${esc(e.timestamp)}</td><td>${esc(e.actorId)}</td><td>${esc(e.action)}</td><td>${esc(e.resourceId||'')}</td></tr>`).join('');return `<h1>Audit & Trust</h1><p class="muted">Mọi thay đổi quan trọng trong reference runtime được ghi dấu. Không ghi API key.</p><div class="card"><table><tr><th>Time</th><th>Actor</th><th>Action</th><th>Resource</th></tr>${rows||'<tr><td colspan="4">Chưa có sự kiện</td></tr>'}</table></div>`}
-
-function bindViewActions(){
- if(state.view==='capabilities' && policy.canManageCapabilities(state.actor)) document.querySelector('#save-cap')?.addEventListener('click',()=>{
-   const id=document.querySelector('#cap-id').value.trim(); if(!id)return alert('Cần ID');
-   adminAssembly.saveCapability(state.actor,{id,name:document.querySelector('#cap-name').value.trim()||id,box:document.querySelector('#cap-box').value.trim()||'SBBox-Generic',authority:document.querySelector('#cap-auth').value,scope:document.querySelector('#cap-scope').value.trim()||'CONTEXT',version:document.querySelector('#cap-ver').value.trim()||'2.0.0',domain:'Custom',owner:'University',status:'ACTIVE',agents:[],tools:[],evidence:'REQUIRED'}); render();
- });
- if(state.view==='users' && policy.canManageUsers(state.actor)) document.querySelector('#save-user')?.addEventListener('click',()=>{
-   const username=document.querySelector('#usr-name').value.trim(); if(!username)return alert('Cần username');
-   const role=document.querySelector('#usr-role').value; const tier=Number(document.querySelector('#usr-tier').value); const scope=document.querySelector('#usr-scope').value.trim()||'UNIVERSITY';
-   adminAssembly.createUser(state.actor,{id:'USR-'+crypto.randomUUID().slice(0,8).toUpperCase(),username,displayName:document.querySelector('#usr-display').value.trim()||username,status:'ACTIVE',assignments:[{role,tier,scope}]}); render();
- });
-}
-
-function render(){
- if(!state.actor){loginScreen();return}
- const views={dashboard:dashboard,capabilities:capabilityView,users:usersView,wires:wiresView,architecture:architectureView,audit:auditView};
- shell((views[state.view]||dashboard)()); bindViewActions();
-}
+Constitutional envelope: IDENTITY × TRUST × GOVERNANCE × PRIVACY</pre>`)}${card('Runtime registry',`<pre>${esc(JSON.stringify(sbbs.snapshot(),null,2))}</pre>`)}`; }
+function helpView(){return `<div class="page-head"><div><h1>${t('help')}</h1><p>Global + Context + Inline Help.</p></div></div>${card('Bạn đang ở đâu?',`Working Context hiện tại: <b>${esc(roleLabel(ctx()))}</b>. Menu, scope, agent/capability và approval rights được tính theo context này.`)}${card('Các nguyên tắc vận hành',`<ul><li>Capability ≠ Authority.</li><li>Admin hệ thống không mặc nhiên có institutional authority.</li><li>Fact → Evidence → Inference → Recommendation → Human Decision.</li><li>Khi thiếu bằng chứng/vượt quyền: STOP → HANDOFF.</li><li>BYOK key không được persist/audit.</li></ul>`)}`; }
+function helpDrawer(){return `<div class="drawer"><button id="close-help">×</button><h3>Context Help</h3><p><b>${esc(state.view)}</b></p><p>Working Context: ${esc(roleLabel(ctx()))}</p><p>${state.view==='assistant'?'Nhập nhiệm vụ tự nhiên. Router phân loại task, runtime chọn agent/capability/tool và kiểm tra policy trước khi thực thi.':'Trợ giúp này thay đổi theo màn hình đang mở.'}</p></div>`; }
+function availableAgents(){return agents.list().filter(a=>a.scopes.includes('CONTEXT')||a.scopes.includes(ctx()?.scope?.type)||a.scopes.includes('PUBLIC')||(ctx()?.tier===1&&a.scopes.includes('UNIVERSITY')))}
+function bind(){ document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>{state.view=b.dataset.jump;render()}); $('#close-help')?.addEventListener('click',()=>{state.help=false;render()});
+ $('#run-task')?.addEventListener('click',async()=>{const task=$('#task').value.trim(); $('#run-state').textContent='Running…'; try{state.lastResult=await agentRuntime.run({task,user:state.user,context:ctx()}); if(state.lastResult.handoff?.required && ['MANAGEMENT_ANALYSIS','DECISION_SUPPORT'].includes(state.lastResult.route?.type)){const ds=store.get('decisions',[]); ds.unshift({id:`DEC-${Date.now()}`,title:task,status:'PENDING',scopeId:ctx().scope.id,traceId:state.lastResult.taskId});store.set('decisions',ds);} render();}catch(e){alert(e.message);$('#run-state').textContent='';}});
+ $('#research-run')?.addEventListener('click',async()=>{state.lastResult=await agentRuntime.run({task:$('#research-task').value,user:state.user,context:ctx()});render()});
+ $('#knowledge-filter')?.addEventListener('input',e=>{$('#knowledge-list').innerHTML=knowledgeRows(visibleKnowledge().filter(k=>(k.title+' '+k.text).toLowerCase().includes(e.target.value.toLowerCase())))});
+ $('#create-user')?.addEventListener('click',()=>{try{adminAssembly.createUser(state.user,ctx(),{username:$('#new-u').value.trim(),password:$('#new-p').value,displayName:$('#new-name').value.trim()||$('#new-u').value.trim(),assignment:{id:`RA-${crypto.randomUUID().slice(0,8).toUpperCase()}`,role:$('#new-role').value,tier:Number($('#new-tier').value),scope:{type:Number($('#new-tier').value)===0?'SYSTEM':'CONTEXT',id:$('#new-scope').value.trim()||'UNIVERSITY'},authority:[],dataScopes:[$('#new-scope').value.trim()||'PUBLIC'],validFrom:new Date().toISOString().slice(0,10),validUntil:null}});render()}catch(e){alert(e.message)}});
+ document.querySelectorAll('[data-add-role]').forEach(b=>b.onclick=()=>{const role=prompt('Role (e.g. RESEARCHER)'); if(!role)return; const tier=Number(prompt('Tier 0-3','3')); const scope=prompt('Scope ID','PUBLIC'); adminAssembly.addAssignment(state.user,ctx(),b.dataset.addRole,{id:`RA-${crypto.randomUUID().slice(0,8).toUpperCase()}`,role,tier,scope:{type:'CONTEXT',id:scope},authority:[],dataScopes:[scope],validFrom:new Date().toISOString().slice(0,10),validUntil:null});render()});
+ $('#save-cap')?.addEventListener('click',()=>{try{adminAssembly.saveCapability(state.user,ctx(),{id:$('#cap-id').value.trim(),name:$('#cap-name').value.trim()||$('#cap-id').value.trim(),box:$('#cap-box').value.trim()||'SBBox-Generic',authority:$('#cap-auth').value,scope:$('#cap-scope').value.trim(),version:$('#cap-ver').value.trim(),domain:'Custom',agents:[],tools:[],evidence:'REQUIRED',status:'ACTIVE'});render()}catch(e){alert(e.message)}});
+ $('#save-model')?.addEventListener('click',()=>{model.setConfig({provider:$('#provider').value,model:$('#model').value.trim(),apiKey:$('#api-key').value,maxTokens:Number($('#max-tokens').value)});alert('Đã áp dụng cho tab hiện tại. API key không được persist.');render()});
+ $('#export')?.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(store.export(['users','roles','capabilities','agents','tools','wires','knowledge','audit','traces','memory','failures','decisions']),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ANU2-state.json';a.click();URL.revokeObjectURL(a.href)});
+ $('#reset')?.addEventListener('click',()=>{if(confirm('Reset toàn bộ demo data?')){['users','roles','capabilities','agents','tools','wires','knowledge','audit','traces','memory','failures','decisions'].forEach(k=>store.remove(k));location.reload()}});
+ document.querySelectorAll('[data-approve]').forEach(b=>b.onclick=()=>{const ds=store.get('decisions',[]);const d=ds.find(x=>x.id===b.dataset.approve); if(!d)return; const allow=ctx().tier===1?policy.canApproveInstitutional(ctx()):policy.canApproveUnit(ctx(),d.scopeId); if(!allow)return alert('DENIED: active context không có authority phù hợp'); d.status='APPROVED'; d.approvedBy=state.user.id;d.approvedAt=new Date().toISOString();store.set('decisions',ds);audit.record({actorId:state.user.id,contextId:ctx().id,action:'DECISION_APPROVE',resourceId:d.id});render()}); }
+function render(){ if(!state.user)return login(); const views={dashboard,assistant,research,knowledge:knowledgeView,decisions,identities:identitiesView,capabilities:capabilitiesView,agents:agentsView,wires:wiresView,audit:auditView,memory:memoryView,settings:settingsView,architecture:architectureView,help:helpView}; shell((views[state.view]||dashboard)()); }
 render();

@@ -1,11 +1,15 @@
-export class PolicyBox{
-  canManageUsers(actor){return actor?.assignments?.some(a=>a.role==='SYSTEM_ADMIN')}
-  canManageCapabilities(actor){return actor?.assignments?.some(a=>['SYSTEM_ADMIN','VICE_RECTOR'].includes(a.role))}
-  canApproveInstitutional(actor){return actor?.assignments?.some(a=>['RECTOR','VICE_RECTOR'].includes(a.role))}
-  explain(actor,action){
-    if(action==='manage-users') return this.canManageUsers(actor)?'ALLOW: SYSTEM_ADMIN':'DENY: requires SYSTEM_ADMIN';
-    if(action==='manage-capabilities') return this.canManageCapabilities(actor)?'ALLOW':'DENY: requires SYSTEM_ADMIN or VICE_RECTOR';
-    if(action==='institutional-approve') return this.canApproveInstitutional(actor)?'ALLOW':'DENY: system administration alone is not institutional authority';
-    return 'DENY: no matching policy';
+export class PolicyBox {
+  effective(user,context){ return {identity:user?.id,role:context?.role,tier:context?.tier,scope:context?.scope,authority:context?.authority||[],dataScopes:context?.dataScopes||[]}; }
+  canSystemAdmin(ctx){ return ctx?.role==='SYSTEM_ADMIN'; }
+  canManageUsers(ctx){ return this.canSystemAdmin(ctx); }
+  canManageCapabilities(ctx){ return this.canSystemAdmin(ctx); }
+  canApproveInstitutional(ctx){ return ctx?.tier===1 && (ctx?.authority||[]).includes('INSTITUTIONAL_APPROVE'); }
+  canApproveUnit(ctx,scopeId){ return ctx?.tier===2 && (ctx?.authority||[]).includes('UNIT_APPROVE') && ctx?.scope?.id===scopeId; }
+  canUseCapability(ctx,cap){ if(!ctx||!cap||cap.status!=='ACTIVE') return false; if(ctx.role==='SYSTEM_ADMIN') return cap.authority==='READ' || cap.domain==='Help'; if(cap.scope==='UNIVERSITY' && ctx.tier>1) return false; return true; }
+  decision(action,ctx,resource={}){
+    if(action==='SYSTEM_ADMIN') return {allow:this.canSystemAdmin(ctx),reason:'SYSTEM_ADMIN_ROLE_REQUIRED'};
+    if(action==='INSTITUTIONAL_APPROVE') return {allow:this.canApproveInstitutional(ctx),reason:'TIER1_INSTITUTIONAL_AUTHORITY_REQUIRED'};
+    if(action==='UNIT_APPROVE') return {allow:this.canApproveUnit(ctx,resource.scopeId),reason:'UNIT_SCOPE_AUTHORITY_REQUIRED'};
+    return {allow:true,reason:'DEFAULT_ALLOW'};
   }
 }

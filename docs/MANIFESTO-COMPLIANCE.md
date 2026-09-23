@@ -1,17 +1,14 @@
-# Manifesto compliance matrix — v2.0 reference
+# Manifesto Compliance Matrix
 
-| Area | v2.0 status | Notes |
-|---|---|---|
-| SBBS: Smart Boxes | Implemented | Registry, Identity, Capability, Policy, Audit |
-| SBBS: Smart Wires | Implemented (registry/reference) | Runtime transport can be expanded |
-| SBBS: Assemblies | Implemented | Admin Governance |
-| SBBS: Components | Implemented | SPA screens |
-| ANU: Identity | Implemented (browser reference) | One identity with role assignments |
-| ANU: Capability governance | Implemented | First-class registry |
-| ANU: Capability != Authority | Implemented | PolicyBox |
-| ANU: Trust/Audit | Partial | Browser audit only |
-| ANU: Provenance graph | Pending | Needs first-class box/wires |
-| ANU: University Memory | Pending | Needs durable institutional store |
-| ANU: Safe Failure | Pending | Needs failure/handoff box |
-| ANU: Knowledge -> Capability learning | Partial | Wire contract represented, learning runtime pending |
-| Institutional security | Not claimed | Requires trusted backend |
+| Invariant | V2.0 implementation |
+|---|---|
+| Smart Boxes / Smart Wires / Assemblies / Components | Explicit runtime and registries |
+| Capability != Authority | PolicyBox checks capability separately from institutional authority |
+| One identity, multiple roles | IdentityBox assignments + ContextBox active context |
+| Human agency | Agents cannot approve/decide; Decision queue requires authorized human context |
+| Fact/Evidence/Inference/Recommendation/Decision | Agent Runtime result, evidence and handoff separation |
+| Provenance | ProvenanceBox creates traceable chain per run |
+| Safe failure | FailureBox stops and preserves state on empty task, denied capability or insufficient evidence |
+| University Memory | MemoryBox stores learning/outcome records without API keys |
+| Technology replaceable | BrowserStore is an adapter; core contracts do not depend on GitHub Pages |
+| Operational workspace | Role/context menu and dashboards; architecture is not the default workspace |

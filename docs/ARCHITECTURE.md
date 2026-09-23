@@ -1,34 +1,23 @@
-# ANU2 v2.0 architecture
+# ANU2 v2.0 Architecture
 
-## Core distinction
+## Upgrade rule
 
-ANU Manifesto = institutional operating principles and constraints.
-SBBS Manifesto = software composition model.
+`V2.0 = v0.1.3 functional superset`
 
-## SBBS primitives
+The role-aware operational workspace remains the user-facing model. SBBS is the compositional substrate underneath it.
 
-1. Smart Box: a capability boundary with stable contract and replaceable implementation.
-2. Smart Wire: a typed/policy-aware connection between boxes.
-3. Assembly: orchestration of boxes/wires for a business outcome.
-4. Component: presentation and human interaction.
+## Runtime path
 
-## Current reference boxes
+Human/User -> Working Context -> Component -> Assembly -> Agent Runtime -> Capability Resolver -> Smart Boxes/Smart Wires -> Policy/Authority -> Execution -> Evidence -> Audit -> University Memory -> Learning.
 
-- SBBox-Identity
-- SBBox-CapabilityRegistry
-- SBBox-WireRegistry
-- SBBox-Policy
-- SBBox-Audit
+## First-class Smart Boxes
 
-## Current assembly
+Identity, Context, Capability Registry, Knowledge, Evidence, Policy, Audit, Provenance, University Memory, Failure, Model Gateway, plus registries for Agents/Tools/Wires.
 
-- AdminGovernance Assembly
+## Authority
 
-## Required next boxes for institutional parity
+Effective permission is constrained by identity, active role, tier, organization/data scope, capability, resource, action and policy. Role assignments are never automatically unioned.
 
-- Knowledge, Evidence, Data Trust, Provenance, University Memory
-- Agent Runtime, Model Gateway, Decision, Handoff/Failure, Learning/Evolution
+## GitHub Pages boundary
 
-## Authority invariant
-
-Capability and Authority are evaluated independently. `SYSTEM_ADMIN` is platform authority and is not sufficient for institutional decision approval.
+BrowserStore and client-side authorization are reference implementations. Production deployment must move authoritative identity, scope checks, policy decisions, audit integrity and secret-bearing integrations to a backend.

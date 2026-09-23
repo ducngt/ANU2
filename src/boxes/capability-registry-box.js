@@ -1,8 +1,7 @@
-import {RegistryBox} from './registry-box.js';
-export const seedCapabilities=[
- {id:'knowledge.retrieve',name:'Knowledge Retrieve',version:'2.0.0',domain:'Knowledge',owner:'University',status:'ACTIVE',authority:'READ',scope:'CONTEXT',box:'SBBox-Knowledge',agents:['Knowledge Agent','Research Agent'],tools:['knowledge-tool'],evidence:'REQUIRED'},
- {id:'evidence.evaluate',name:'Evidence Evaluate',version:'2.0.0',domain:'Trust',owner:'University',status:'ACTIVE',authority:'ANALYZE',scope:'CONTEXT',box:'SBBox-Evidence',agents:['Evidence Agent','Research Agent'],tools:['evidence-tool'],evidence:'REQUIRED'},
- {id:'model.reason',name:'Model Reason',version:'2.0.0',domain:'Intelligence',owner:'University',status:'ACTIVE',authority:'REASON',scope:'CONTEXT',box:'SBBox-Model',agents:['Research Agent','Management Agent'],tools:['model-tool'],evidence:'CONTEXTUAL'},
- {id:'decision.prepare',name:'Decision Prepare',version:'2.0.0',domain:'Decision',owner:'University',status:'ACTIVE',authority:'RECOMMEND',scope:'CONTEXT',box:'SBBox-Decision',agents:['Executive Agent'],tools:['decision-tool'],evidence:'REQUIRED'}
-];
-export class CapabilityRegistryBox extends RegistryBox{constructor(){super('anu2.capabilities',seedCapabilities)}}
+export class CapabilityRegistryBox {
+  constructor(store, seed){ this.store=store; if(!store.get('capabilities')) store.set('capabilities',seed.capabilities); }
+  list(){ return this.store.get('capabilities',[]); }
+  get(id){ return this.list().find(x=>x.id===id)||null; }
+  save(cap){ const arr=this.list(); const i=arr.findIndex(x=>x.id===cap.id); const next={status:'ACTIVE',version:'2.0.0',agents:[],tools:[],evidence:'REQUIRED',...cap}; if(i>=0) arr[i]=next; else arr.push(next); this.store.set('capabilities',arr); return next; }
+  deactivate(id){ const c=this.get(id); if(!c) throw new Error('CAPABILITY_NOT_FOUND'); c.status='INACTIVE'; return this.save(c); }
+}

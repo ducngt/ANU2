@@ -1,8 +1,5 @@
 export class AuditBox {
-  constructor(key='anu2.audit'){ this.key=key; }
-  record(event){
-    const all=this.list(); all.unshift({id:crypto.randomUUID(),timestamp:new Date().toISOString(),...event});
-    localStorage.setItem(this.key,JSON.stringify(all.slice(0,500))); return all[0];
-  }
-  list(){ try{return JSON.parse(localStorage.getItem(this.key)||'[]')}catch{return []} }
+  constructor(store){ this.store=store; if(!store.get('audit')) store.set('audit',[]); }
+  record(evt){ const arr=this.list(); const event={id:`AUD-${Date.now()}-${Math.random().toString(16).slice(2,6)}`,timestamp:new Date().toISOString(),...evt}; arr.unshift(event); this.store.set('audit',arr.slice(0,1000)); return event; }
+  list(){ return this.store.get('audit',[]); }
 }
