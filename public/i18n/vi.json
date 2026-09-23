@@ -1,0 +1,9 @@
+{
+  "app":{"name":"ANU2","version":"V4.0 alpha 1"},
+  "common":{"logout":"Đăng xuất","help":"Trợ giúp","language":"Ngôn ngữ","scope":"Phạm vi"},
+  "login":{"title":"Đăng nhập","subtitle":"Không gian làm việc thay đổi theo vai trò hiện hành.","username":"Tài khoản","password":"Mật khẩu","submit":"Đăng nhập","demo":"Tài khoản thử nghiệm","invalid":"Sai tài khoản hoặc mật khẩu"},
+  "context":{"workingAs":"Đang làm việc với vai trò"},
+  "roles":{"SYSTEM_ADMIN":"Quản trị hệ thống","RECTOR":"Hiệu trưởng","VICE_RECTOR":"Phó Hiệu trưởng","DEPARTMENT_HEAD":"Trưởng đơn vị","LECTURER":"Giảng viên","RESEARCHER":"Nhà nghiên cứu","STUDENT":"Sinh viên","STAFF":"Cán bộ"},
+  "menu":{"dashboard_system":"Tổng quan hệ thống","imports":"Nhập dữ liệu","master":"Dữ liệu nền tảng","accounts":"Người dùng & phân quyền","work":"Công việc","settings":"AI & mô hình","audit":"Nhật ký hệ thống","advanced":"Cấu hình nâng cao","dashboard_university":"Tổng quan nhà trường","work_decision":"Công việc & quyết định","research":"Nghiên cứu","data_metrics":"Dữ liệu & chỉ số","dashboard_unit":"Tổng quan đơn vị","people":"Nhân sự","data":"Dữ liệu","dashboard_teaching":"Công việc giảng dạy","teaching":"Giảng dạy","knowledge":"Tri thức","dashboard_research":"Không gian nghiên cứu","research_analysis":"Đề tài & phân tích","knowledge_evidence":"Tri thức & bằng chứng","dashboard_student":"Trang chủ","learning":"Môn học & nhiệm vụ","documents_knowledge":"Tài liệu & tri thức","dashboard_staff":"Công việc hôm nay","business_data":"Dữ liệu nghiệp vụ"},
+  "settings":{"title":"AI & mô hình","subtitle":"Chỉ Quản trị hệ thống được cấu hình nhà cung cấp và mô hình.","adminOnly":"Chức năng này chỉ dành cho Quản trị hệ thống."}
+}

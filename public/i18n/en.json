@@ -1,0 +1,9 @@
+{
+  "app":{"name":"ANU2","version":"V4.0 alpha 1"},
+  "common":{"logout":"Sign out","help":"Help","language":"Language","scope":"Scope"},
+  "login":{"title":"Sign in","subtitle":"Your workspace changes with the active role.","username":"Username","password":"Password","submit":"Sign in","demo":"Demo accounts","invalid":"Invalid username or password"},
+  "context":{"workingAs":"Working as"},
+  "roles":{"SYSTEM_ADMIN":"System Administrator","RECTOR":"Rector","VICE_RECTOR":"Vice Rector","DEPARTMENT_HEAD":"Department Head","LECTURER":"Lecturer","RESEARCHER":"Researcher","STUDENT":"Student","STAFF":"Staff"},
+  "menu":{"dashboard_system":"System overview","imports":"Data import","master":"Master data","accounts":"Users & permissions","work":"Work","settings":"AI & models","audit":"System log","advanced":"Advanced settings","dashboard_university":"University overview","work_decision":"Work & decisions","research":"Research","data_metrics":"Data & metrics","dashboard_unit":"Unit overview","people":"People","data":"Data","dashboard_teaching":"Teaching work","teaching":"Teaching","knowledge":"Knowledge","dashboard_research":"Research workspace","research_analysis":"Projects & analysis","knowledge_evidence":"Knowledge & evidence","dashboard_student":"Home","learning":"Courses & tasks","documents_knowledge":"Documents & knowledge","dashboard_staff":"Today's work","business_data":"Operational data"},
+  "settings":{"title":"AI & models","subtitle":"Only System Administrators can configure providers and models.","adminOnly":"This function is restricted to System Administrators."}
+}
