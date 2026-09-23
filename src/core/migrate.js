@@ -36,7 +36,7 @@ function mergeSeedArray(existing=[], incoming=[], keyFn){
   return out;
 }
 
-export function migrateStore(store,seed,{version='5.0.0'}={}){
+export function migrateStore(store,seed,{version='5.1.0'}={}){
   const report=[];
   for(const [name,keyFn] of Object.entries(keyFor)){
     const before=store.get(name,[]);

@@ -21,6 +21,13 @@ export class ArtifactStore {
     const artifact={id,name:file.name||id,mimeType:file.type||'application/octet-stream',mediaType,size:Number(file.size||0),source,uploadedBy,uploadedAt:new Date().toISOString(),workItemId,domain,classification,checksum:await sha256(file),processingStatus:text?'TEXT_EXTRACTED':'STORED',textPreview:text.slice(0,4000)};
     const arr=this.list(); arr.unshift(artifact); this.store.set('artifacts',arr.slice(0,1000)); this.sessionFiles.set(id,file); return artifact;
   }
+
+  ingestText(text,{uploadedBy,workItemId=null,domain='OIS',classification='INTERNAL',source='TEXT_INPUT',name='Yêu cầu bằng lời nói / văn bản'}={}){
+    const value=String(text||'').trim(); if(!value) throw new Error('TEXT_REQUIRED');
+    const id=`ART-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+    const artifact={id,name,mimeType:'text/plain',mediaType:'TEXT',size:new TextEncoder().encode(value).length,source,uploadedBy,uploadedAt:new Date().toISOString(),workItemId,domain,classification,checksum:'',processingStatus:'TEXT_EXTRACTED',textPreview:value.slice(0,4000)};
+    const arr=this.list(); arr.unshift(artifact); this.store.set('artifacts',arr.slice(0,1000)); return artifact;
+  }
   attachToWork(artifactId,workId){const arr=this.list();const a=arr.find(x=>x.id===artifactId);if(!a)throw new Error('ARTIFACT_NOT_FOUND');a.workItemId=workId;this.store.set('artifacts',arr);return a;}
   file(id){return this.sessionFiles.get(id)||null;}
 }
