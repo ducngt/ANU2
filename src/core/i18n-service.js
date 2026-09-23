@@ -13,6 +13,19 @@ export class I18nService {
     this.dict=await res.json(); this.lang=lang; if(persist) globalThis.localStorage?.setItem?.(this.storageKey,lang); return lang;
   }
   t(key,vars={}){ let v=key.split('.').reduce((o,k)=>o?.[k],this.dict); if(typeof v!=='string') return `[${key}]`; return v.replace(/\{(\w+)\}/g,(_,k)=>vars[k]??`{${k}}`); }
+  phrase(source){ return this.dict?._phrases?.[source] ?? source; }
+  translateDOM(root=document){
+    if(!root?.querySelectorAll) return;
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+    for(const node of nodes){
+      const raw=node.nodeValue; const trimmed=raw.trim(); if(!trimmed) continue;
+      const translated=this.phrase(trimmed); if(translated!==trimmed){ const start=raw.match(/^\s*/)?.[0]||''; const end=raw.match(/\s*$/)?.[0]||''; node.nodeValue=start+translated+end; }
+    }
+    for(const el of root.querySelectorAll('[placeholder],[title]')){
+      for(const attr of ['placeholder','title']){ const v=el.getAttribute(attr); if(v){const x=this.phrase(v); if(x!==v) el.setAttribute(attr,x);} }
+    }
+  }
   languages(){return [...SUPPORTED];}
 }
 export {SUPPORTED};

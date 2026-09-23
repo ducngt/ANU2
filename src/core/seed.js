@@ -2,23 +2,24 @@ const assignment=(id,role,tier,type,scope,authority=[],dataScopes=[scope])=>({id
 export const seed = {
   users: [
     {id:'USR-ADMIN',username:'admin',password:'Admin123!',displayName:'System Administrator',status:'ACTIVE',assignments:[assignment('RA-ADMIN','SYSTEM_ADMIN',0,'SYSTEM','ANU2',['SYSTEM_ADMIN'],['SYSTEM'])]},
-    {id:'USR-EXEC',username:'executive',password:'Executive123!',displayName:'Executive Demo',status:'ACTIVE',assignments:[assignment('RA-EXEC','VICE_RECTOR',1,'UNIVERSITY','ANU',['INSTITUTIONAL_RECOMMEND','INSTITUTIONAL_APPROVE'],['UNIVERSITY'])]},
+    {id:'USR-RECTOR',username:'rector',password:'Rector123!',displayName:'Rector Demo',status:'ACTIVE',assignments:[assignment('RA-RECTOR','RECTOR',1,'UNIVERSITY','ANU',['INSTITUTIONAL_RECOMMEND','INSTITUTIONAL_APPROVE'],['*'])]},
+    {id:'USR-EXEC',username:'executive',password:'Executive123!',displayName:'Executive Demo',status:'ACTIVE',assignments:[assignment('RA-EXEC','VICE_RECTOR',1,'UNIVERSITY','ANU',['INSTITUTIONAL_RECOMMEND','INSTITUTIONAL_APPROVE'],['*'])]},
     {id:'USR-MANAGER',username:'manager',password:'Manager123!',displayName:'Manager Demo',status:'ACTIVE',assignments:[assignment('RA-MGR','DEPARTMENT_HEAD',2,'UNIT','FACULTY-ENG',['UNIT_RECOMMEND','UNIT_APPROVE'],['FACULTY-ENG'])]},
     {id:'USR-LECTURER',username:'lecturer',password:'Lecturer123!',displayName:'Lecturer Demo',status:'ACTIVE',assignments:[assignment('RA-LECT','LECTURER',3,'UNIT','FACULTY-ENG',['TEACHING'],['FACULTY-ENG','PUBLIC'])]},
     {id:'USR-RESEARCH',username:'researcher',password:'Research123!',displayName:'Researcher Demo',status:'ACTIVE',assignments:[assignment('RA-RES','RESEARCHER',3,'PROJECT','PROJECT-AI-2026',['RESEARCH'],['PROJECT-AI-2026','PUBLIC'])]},
     {id:'USR-STUDENT',username:'student',password:'Student123!',displayName:'Student Demo',status:'ACTIVE',assignments:[assignment('RA-STU','STUDENT',3,'PROGRAM','PROGRAM-AI',['LEARNING'],['PROGRAM-AI','PUBLIC'])]},
     {id:'USR-STAFF',username:'staff',password:'Staff123!',displayName:'Staff Demo',status:'ACTIVE',assignments:[assignment('RA-STAFF','STAFF',3,'UNIT','OFFICE-ACADEMIC',['OPERATIONS'],['OFFICE-ACADEMIC','PUBLIC'])]},
     {id:'USR-MULTI',username:'multirole',password:'MultiRole123!',displayName:'Multi-role Demo',status:'ACTIVE',assignments:[
-      assignment('RA-MULTI-1','VICE_RECTOR',1,'UNIVERSITY','ANU',['INSTITUTIONAL_RECOMMEND','INSTITUTIONAL_APPROVE'],['UNIVERSITY']),
+      assignment('RA-MULTI-1','VICE_RECTOR',1,'UNIVERSITY','ANU',['INSTITUTIONAL_RECOMMEND','INSTITUTIONAL_APPROVE'],['*']),
       assignment('RA-MULTI-2','LECTURER',3,'UNIT','FACULTY-ENG',['TEACHING'],['FACULTY-ENG','PUBLIC']),
       assignment('RA-MULTI-3','RESEARCHER',3,'PROJECT','PROJECT-AI-2026',['RESEARCH'],['PROJECT-AI-2026','PUBLIC'])
     ]}
   ],
   roles:[
-    {id:'SYSTEM_ADMIN',tier:0,label:{vi:'Quản trị hệ thống',en:'System Administrator'}},
-    {id:'RECTOR',tier:1,label:{vi:'Hiệu trưởng',en:'Rector'}},{id:'VICE_RECTOR',tier:1,label:{vi:'Phó Hiệu trưởng',en:'Vice Rector'}},
-    {id:'DEPARTMENT_HEAD',tier:2,label:{vi:'Trưởng đơn vị',en:'Department Head'}},{id:'LECTURER',tier:3,label:{vi:'Giảng viên',en:'Lecturer'}},
-    {id:'RESEARCHER',tier:3,label:{vi:'Nhà nghiên cứu',en:'Researcher'}},{id:'STUDENT',tier:3,label:{vi:'Sinh viên',en:'Student'}},{id:'STAFF',tier:3,label:{vi:'Cán bộ',en:'Staff'}}
+    {id:'SYSTEM_ADMIN',tier:0,label:{vi:'Quản trị hệ thống',en:'System Administrator','zh-CN':'系统管理员'}},
+    {id:'RECTOR',tier:1,label:{vi:'Hiệu trưởng',en:'Rector','zh-CN':'校长'}},{id:'VICE_RECTOR',tier:1,label:{vi:'Phó Hiệu trưởng',en:'Vice Rector','zh-CN':'副校长'}},
+    {id:'DEPARTMENT_HEAD',tier:2,label:{vi:'Trưởng đơn vị',en:'Department Head','zh-CN':'部门负责人'}},{id:'LECTURER',tier:3,label:{vi:'Giảng viên',en:'Lecturer','zh-CN':'教师'}},
+    {id:'RESEARCHER',tier:3,label:{vi:'Nhà nghiên cứu',en:'Researcher','zh-CN':'研究人员'}},{id:'STUDENT',tier:3,label:{vi:'Sinh viên',en:'Student','zh-CN':'学生'}},{id:'STAFF',tier:3,label:{vi:'Cán bộ',en:'Staff','zh-CN':'职员'}}
   ],
   capabilities:[
     {id:'knowledge.retrieve',name:'Tra cứu tri thức',authority:'READ',status:'ACTIVE',agents:['knowledge-agent','research-agent','management-agent','executive-agent']},
@@ -57,6 +58,12 @@ export const seed = {
       {id:'ASG-2',agentId:'data-agent',task:'Phân tích dữ liệu tuyển sinh và nguồn lực',capabilities:['data.analyze','model.reason'],actions:['READ','ANALYZE','CREATE_DRAFT'],status:'READY'},
       {id:'ASG-3',agentId:'management-agent',task:'So sánh kịch bản và đánh giá rủi ro',capabilities:['scenario.compare','risk.assess','decision.prepare','model.reason'],actions:['READ','ANALYZE','CREATE_DRAFT','RECOMMEND'],status:'WAITING'}
     ],outputs:[],createdAt:'2026-09-24T00:00:00Z'}
+  ],
+  organizations:[
+    {id:'ANU',code:'ANU',name:'Trường Đại học',type:'UNIVERSITY',parentId:'',mission:'Quản trị và phát triển toàn trường',functions:['Định hướng chiến lược','Đào tạo','Nghiên cứu','Phục vụ xã hội'],responsibilities:['Xác lập mục tiêu và chính sách','Phân bổ nguồn lực','Giám sát kết quả'],managerRole:'RECTOR',status:'ACTIVE'},
+    {id:'BOARD',code:'BOARD',name:'Ban Giám hiệu',type:'EXECUTIVE_BOARD',parentId:'ANU',mission:'Điều hành toàn trường',functions:['Điều hành chiến lược','Ra quyết định theo thẩm quyền','Điều phối liên đơn vị'],responsibilities:['Theo dõi toàn bộ công việc và dữ liệu','Phê duyệt trong phạm vi thẩm quyền','Chịu trách nhiệm kết quả toàn trường'],managerRole:'RECTOR',status:'ACTIVE'},
+    {id:'FACULTY-ENG',code:'FACULTY-ENG',name:'Khoa Kỹ thuật',type:'FACULTY',parentId:'ANU',mission:'Đào tạo và nghiên cứu lĩnh vực kỹ thuật',functions:['Đào tạo','Nghiên cứu','Quản lý người học'],responsibilities:['Tổ chức chương trình đào tạo','Quản lý giảng viên','Triển khai nghiên cứu'],managerRole:'DEPARTMENT_HEAD',status:'ACTIVE'},
+    {id:'OFFICE-ACADEMIC',code:'OFFICE-ACADEMIC',name:'Phòng Đào tạo',type:'OFFICE',parentId:'ANU',mission:'Quản lý hoạt động đào tạo',functions:['Kế hoạch đào tạo','Quản lý chương trình','Quản lý dữ liệu đào tạo'],responsibilities:['Bảo đảm lịch học và chương trình','Theo dõi dữ liệu học vụ'],managerRole:'DEPARTMENT_HEAD',status:'ACTIVE'}
   ],
   personnel:[
     {id:'PER-001',employeeCode:'CB001',fullName:'Nguyễn Văn A',email:'nva@anu.edu.vn',unit:'BOARD',position:'Phó Hiệu trưởng',status:'ACTIVE',source:'seed'}

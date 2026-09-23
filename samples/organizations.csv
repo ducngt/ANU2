@@ -1,0 +1,3 @@
+code,name,type,parentId,mission,functions,responsibilities,managerRole,status
+FACULTY-IT,Khoa Công nghệ thông tin,FACULTY,ANU,Đào tạo và nghiên cứu CNTT,"Đào tạo;Nghiên cứu;Quản lý người học","Tổ chức chương trình;Quản lý giảng viên;Phát triển nghiên cứu",DEPARTMENT_HEAD,ACTIVE
+OFFICE-QA,Phòng Đảm bảo chất lượng,OFFICE,ANU,Bảo đảm chất lượng toàn trường,"Kiểm định;Đánh giá;Theo dõi chất lượng","Xây dựng tiêu chuẩn;Theo dõi minh chứng;Báo cáo chất lượng",DEPARTMENT_HEAD,ACTIVE
