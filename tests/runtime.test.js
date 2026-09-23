@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {SBBSRuntime} from '../src/assemblies/sbbs-runtime.js';import {PolicyBox} from '../src/boxes/policy-box.js';
+test('SBBS runtime registers boxes/assemblies',()=>{const r=new SBBSRuntime().registerBox('x',{}).registerAssembly('a',{});assert.deepEqual(r.snapshot().boxes,['x']);assert.deepEqual(r.snapshot().assemblies,['a'])});
+test('system admin cannot approve institutional decision by default',()=>{const p=new PolicyBox();const admin={assignments:[{role:'SYSTEM_ADMIN'}]};assert.equal(p.canApproveInstitutional(admin),false)});
+test('vice rector can manage capabilities and approve institutionally',()=>{const p=new PolicyBox();const ex={assignments:[{role:'VICE_RECTOR'}]};assert.equal(p.canManageCapabilities(ex),true);assert.equal(p.canApproveInstitutional(ex),true)});
